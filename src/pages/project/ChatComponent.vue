@@ -44,23 +44,15 @@ const receiveMessage = (event) => {
   }
 };
 
-const receiveMessageStream = (event) => {
+const receiveDelta = (event) => {
   if (!selectedConversation.value || selectedConversation.value.id !== event.conversationId) {
     return
   }
 
   const message = selectedConversation.value.messages.find((message) => message.id === event.messageId);
 
-  if (!message) {
-    return
-  }
-
-  if (event.event?.type === 'content_block_start') {
-    message.tempContent = '';
-  }
-
-  if (event.event?.type === 'content_block_delta') {
-    message.tempContent += event.event.delta.text;
+  if (message) {
+    message.tempContent += event.delta;
   }
 };
 
@@ -132,7 +124,7 @@ const sendMessage = async (messageText) => {
 // Carrega as conversas ao montar o componente
 onMounted(() => {
   socketIOService.socket.on('message-created', receiveMessage);
-  socketIOService.socket.on('message-stream', receiveMessageStream);
+  socketIOService.socket.on('message-delta', receiveDelta);
   loadConversations();
 });
 
