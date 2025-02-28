@@ -10,25 +10,25 @@
 
       <form @submit.prevent="saveProject">
         <div class="mb-4">
-          <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Nome</label>
-          <input type="text" id="name" v-model="project.name" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required/>
+          <label for="name" class="form-label">Nome</label>
+          <input type="text" id="name" v-model="project.name" class="form-input" required/>
         </div>
 
         <div class="mb-4">
-          <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Descrição</label>
-          <textarea id="description" v-model="project.description" rows="3" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"></textarea>
+          <label for="description" class="form-label">Descrição</label>
+          <textarea id="description" v-model="project.description" rows="3" class="form-input"></textarea>
         </div>
 
         <div class="mb-6">
-          <label for="path" class="block text-sm font-medium text-gray-700 mb-1">Caminho</label>
-          <input type="text" id="path" v-model="project.path" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500" required/>
+          <label for="path" class="form-label">Caminho</label>
+          <input type="text" id="path" v-model="project.path" class="form-input" required/>
         </div>
 
         <div class="flex justify-end space-x-3">
-          <button type="button" @click="close" class="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+          <button type="button" @click="close" class="btn btn-secondary">
             Cancelar
           </button>
-          <button type="submit" class="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500" :disabled="loading">
+          <button type="submit" class="btn btn-primary" :disabled="loading">
             {{ loading ? 'Salvando...' : 'Salvar' }}
           </button>
         </div>
