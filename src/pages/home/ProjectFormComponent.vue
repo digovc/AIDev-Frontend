@@ -1,6 +1,6 @@
 <template>
   <dialog ref="dialogRef" class="p-0 rounded-lg shadow-lg">
-    <div class="p-6 w-full max-w-md">
+    <div class="p-6 w-full">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold">Novo Projeto</h2>
         <button @click="close" class="text-gray-500 hover:text-gray-700">
@@ -94,5 +94,10 @@ dialog {
   border: none;
   max-width: 500px;
   width: 100%;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
 }
 </style>
