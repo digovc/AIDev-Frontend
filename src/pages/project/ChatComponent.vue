@@ -39,15 +39,12 @@ const selectedConversation = ref(null);
 const loadConversations = async () => {
   try {
     const projectId = route.params.id;
-    const response = await conversationsApi.getProjectConversations(projectId);
+    const response = await conversationsApi.getConversations(projectId);
     conversations.value = response.data;
 
     // Seleciona a primeira conversa se existir e nenhuma estiver selecionada
     if (conversations.value.length > 0 && !selectedConversation.value) {
       selectedConversation.value = conversations.value[0];
-
-      // Carregar mensagens da conversa selecionada
-      await loadConversationMessages(selectedConversation.value.id);
     }
   } catch (error) {
     console.error('Erro ao carregar conversas:', error);
@@ -67,13 +64,12 @@ const sendMessage = async (messageText) => {
 
       // Por enquanto, vamos criar um objeto de conversa local
       // Na prática, você precisaria adicionar um método createConversation na API
-      const newConversation = {
+      selectedConversation.value = {
         id: Date.now().toString(),
         title: 'Nova conversa',
         messages: []
       };
 
-      selectedConversation.value = newConversation;
       conversations.value.push(selectedConversation.value);
     } catch (error) {
       console.error('Erro ao criar conversa:', error);

@@ -6,10 +6,13 @@ export class ConversationsApi extends ApiBase {
     this.baseUrl = '/conversations';
   }
 
+  async getConversations(projectId) {
+    return this.client.get(this.baseUrl, { params: { projectId } });
+  }
+
   async createConversation(conversationData) {
     return this.client.post(this.baseUrl, conversationData);
   }
-
 
   async sendMessage(conversationId, messageData) {
     return this.client.post(`${ this.baseUrl }/${ conversationId }/messages`, messageData);
