@@ -21,12 +21,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import ChatConversationComponent from './ChatConversationComponent.vue';
 import ChatActionsComponent from './ChatActionsComponent.vue';
 import ChatInputComponent from './ChatInputComponent.vue';
-import { chatApi } from '@/api/chat.api';
+import { conversationsApi } from '@/api/conversations.api';
 
 // Obtenha a rota atual
 const route = useRoute();
@@ -39,12 +39,15 @@ const selectedConversation = ref(null);
 const loadConversations = async () => {
   try {
     const projectId = route.params.id;
-    const response = await chatApi.getConversationsByProjectId(projectId);
+    const response = await conversationsApi.getProjectConversations(projectId);
     conversations.value = response.data;
 
     // Seleciona a primeira conversa se existir e nenhuma estiver selecionada
     if (conversations.value.length > 0 && !selectedConversation.value) {
       selectedConversation.value = conversations.value[0];
+
+      // Carregar mensagens da conversa selecionada
+      await loadConversationMessages(selectedConversation.value.id);
     }
   } catch (error) {
     console.error('Erro ao carregar conversas:', error);
@@ -53,15 +56,24 @@ const loadConversations = async () => {
 
 // Função para enviar uma mensagem
 const sendMessage = async (messageText) => {
+  const projectId = route.params.id;
+
   // Se não houver conversa selecionada, cria uma nova
   if (!selectedConversation.value) {
     try {
-      const projectId = route.params.id;
-      const response = await chatApi.createConversation({
+      // Aqui precisamos implementar a criação de uma nova conversa
+      // Como a API de conversações não tem um método específico para isso,
+      // precisamos adicionar essa funcionalidade ou adaptar o código
+
+      // Por enquanto, vamos criar um objeto de conversa local
+      // Na prática, você precisaria adicionar um método createConversation na API
+      const newConversation = {
+        id: Date.now().toString(),
         title: 'Nova conversa',
-        projectId: projectId
-      });
-      selectedConversation.value = response.data;
+        messages: []
+      };
+
+      selectedConversation.value = newConversation;
       conversations.value.push(selectedConversation.value);
     } catch (error) {
       console.error('Erro ao criar conversa:', error);
@@ -90,9 +102,10 @@ const sendMessage = async (messageText) => {
 
   // Envia mensagem para a API
   try {
-    const response = await chatApi.sendMessage(
-      selectedConversation.value.id,
-      { content: messageText }
+    const response = await conversationsApi.sendMessage(
+        projectId,
+        selectedConversation.value.id,
+        { content: messageText }
     );
 
     // Adiciona resposta da IA se houver

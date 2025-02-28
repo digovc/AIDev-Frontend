@@ -3,18 +3,16 @@ import { ApiBase } from './api.base';
 export class ConversationsApi extends ApiBase {
   constructor() {
     super();
+    this.baseUrl = '/conversations';
   }
 
-  async getProjectConversations(projectId) {
-    return this.client.get(`/projects/${ projectId }/conversations`);
+  async createConversation(conversationData) {
+    return this.client.post(this.baseUrl, conversationData);
   }
 
-  async getConversationMessages(projectId, conversationId) {
-    return this.client.get(`/projects/${ projectId }/conversations/${ conversationId }/messages`);
-  }
 
-  async sendMessage(projectId, conversationId, messageData) {
-    return this.client.post(`/projects/${ projectId }/conversations/${ conversationId }/messages`, messageData);
+  async sendMessage(conversationId, messageData) {
+    return this.client.post(`${ this.baseUrl }/${ conversationId }/messages`, messageData);
   }
 }
 
