@@ -8,16 +8,20 @@
       {{ error }}
     </div>
 
-    <div v-else class="bg-gray-900 rounded-lg shadow-md p-6 max-w-2xl mx-auto">
-      <h1 class="text-3xl font-bold mb-4">{{ project?.name }}</h1>
-      <p class="mb-6 text-lg">{{ project?.description }}</p>
-      <div class="text-gray-300">
-        <span class="font-semibold">Path:</span> {{ project?.path }}
+    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Coluna da esquerda (2/3 do espaço) -->
+      <div class="md:col-span-2 space-y-6">
+        <!-- Componente de informações do projeto -->
+        <ProjectInfoComponent :project="project" @go-back="goBack"/>
+
+        <!-- Componente de tarefas -->
+        <TasksComponent/>
       </div>
-      <div class="mt-8">
-        <button @click="goBack" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-          Voltar
-        </button>
+
+      <!-- Coluna da direita (1/3 do espaço) -->
+      <div class="md:col-span-1">
+        <!-- Componente de chat -->
+        <ChatComponent/>
       </div>
     </div>
   </div>
@@ -27,6 +31,9 @@
 import { onMounted, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { projectsApi } from '@/api/projects.api';
+import ProjectInfoComponent from './ProjectInfoComponent.vue';
+import TasksComponent from './TasksComponent.vue';
+import ChatComponent from './ChatComponent.vue';
 
 const route = useRoute();
 const router = useRouter();
