@@ -14,7 +14,7 @@
       <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop"/>
     </div>
 
-    <TaskFormComponent ref="taskFormRef" @task-created="onTaskCreated"/>
+    <TaskFormComponent ref="taskFormRef" @task-created="onTaskCreated" :project="project"/>
   </div>
 </template>
 
@@ -22,6 +22,13 @@
 import { ref } from 'vue';
 import TaskFormComponent from './TaskFormComponent.vue';
 import TasksGroupComponent from './TasksGroupComponent.vue';
+
+const props = defineProps({
+  project: {
+    type: Object,
+    required: true
+  }
+});
 
 const tasks = ref([]);
 const taskFormRef = ref(null);

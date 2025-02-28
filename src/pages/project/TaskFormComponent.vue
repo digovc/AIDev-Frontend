@@ -43,6 +43,14 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
+import { tasksApi } from '@/api/tasks.api';
+
+const props = defineProps({
+  project: {
+    type: Object,
+    required: true
+  }
+});
 
 const emit = defineEmits(['task-created']);
 const dialogRef = ref(null);
@@ -72,12 +80,13 @@ const resetForm = () => {
 const saveTask = async () => {
   try {
     loading.value = true;
-    // Simulando um ID único para a tarefa
-    const newTask = {
+    const taskData = {
       ...task,
-      id: Date.now().toString()
+      projectId: props.project.id
     };
-    emit('task-created', newTask);
+
+    const response = await tasksApi.createTask(taskData);
+    emit('task-created', response.data);
     close();
   } catch (error) {
     console.error('Erro ao salvar tarefa:', error);

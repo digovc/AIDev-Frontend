@@ -14,7 +14,7 @@
         <!-- Componente de informações do projeto -->
         <ProjectInfoComponent :project="project"/>
         <!-- Componente de tarefas -->
-        <TasksComponent class="grow"/>
+        <TasksComponent class="grow" :project="project"/>
       </div>
 
       <!-- Coluna da direita (1/3 do espaço) -->
