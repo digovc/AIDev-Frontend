@@ -16,7 +16,9 @@
 
         <div class="mb-4">
           <label for="description" class="form-label">Descrição</label>
-          <textarea id="description" v-model="task.description" rows="3" class="form-input"></textarea>
+          <at-ta :members="descriptionOptions">
+            <textarea id="description" v-model="task.description" rows="3" class="form-input"></textarea>
+          </at-ta>
         </div>
 
         <div class="mb-6">
@@ -44,6 +46,7 @@
 <script setup>
 import { reactive, ref } from 'vue';
 import { tasksApi } from '@/api/tasks.api';
+import AtTa from 'vue-at/dist/vue-at-textarea'
 
 const props = defineProps({
   project: {
@@ -51,6 +54,11 @@ const props = defineProps({
     required: true
   }
 });
+
+const descriptionOptions = [
+    'Tarefa 1',
+    'Tarefa 2',
+];
 
 const emit = defineEmits(['task-created', 'task-updated']);
 const dialogRef = ref(null);
