@@ -1,6 +1,14 @@
 <template>
   <div class="container mx-auto p-4">
-    <div class="bg-gray-900 rounded-lg shadow-md p-6 max-w-2xl mx-auto">
+    <div v-if="loading" class="text-center py-8">
+      <p class="text-lg">Carregando projeto...</p>
+    </div>
+
+    <div v-else-if="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+      {{ error }}
+    </div>
+
+    <div v-else class="bg-gray-900 rounded-lg shadow-md p-6 max-w-2xl mx-auto">
       <h1 class="text-3xl font-bold mb-4">{{ project?.name }}</h1>
       <p class="mb-6 text-lg">{{ project?.description }}</p>
       <div class="text-gray-300">
@@ -18,18 +26,25 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
+import { projectsApi } from '@/api/projects.api';
 
 const route = useRoute();
 const router = useRouter();
 const project = ref(null);
+const loading = ref(true);
+const error = ref(null);
 
-onMounted(() => {
-  // Recupera o projeto dos parâmetros da rota
-  if (route.params.project) {
+onMounted(async () => {
+  if (route.params.id) {
     try {
-      project.value = JSON.parse(decodeURIComponent(route.params.project));
+      loading.value = true;
+      const response = await projectsApi.getProjectById(route.params.id);
+      project.value = response.data;
     } catch (e) {
-      console.error('Erro ao decodificar dados do projeto:', e);
+      console.error('Erro ao carregar dados do projeto:', e);
+      error.value = 'Não foi possível carregar o projeto. Tente novamente mais tarde.';
+    } finally {
+      loading.value = false;
     }
   }
 });
