@@ -6,8 +6,8 @@ export class TasksApi extends ApiBase {
     this.baseUrl = '/tasks';
   }
 
-  async getTasks(projectId) {
-    return this.client.get(this.baseUrl, { params: { projectId } });
+  async getTasksByProject(projectId) {
+    return this.client.get(`${ this.baseUrl }/by-project/${ projectId }`);
   }
 
   async getTaskById(taskId) {

@@ -19,9 +19,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import TaskFormComponent from './TaskFormComponent.vue';
 import TasksGroupComponent from './TasksGroupComponent.vue';
+// Adicione a importação da API de tarefas (ajuste o caminho conforme necessário)
+import { tasksApi } from '@/api/tasks.api';
 
 const props = defineProps({
   project: {
@@ -73,4 +75,17 @@ const handleStop = (taskId) => {
     task.status = 'done';
   }
 };
+
+const loadTasks = async () => {
+  try {
+    const response = await tasksApi.getTasksByProject(props.project.id);
+    tasks.value = response.data;
+  } catch (error) {
+    console.error('Erro ao carregar tarefas:', error);
+  }
+};
+
+onMounted(() => {
+  loadTasks();
+});
 </script>
