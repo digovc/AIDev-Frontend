@@ -6,21 +6,24 @@
     <div class="flex-grow">
       <h4 class="font-bold">{{ task.title }}</h4>
     </div>
-    <div class="flex space-x-2">
+    <div class="flex space-x-4">
       <button v-if="task.status !== 'running'" @click="$emit('play', task.id)" class="text-green-400 hover:text-green-300" title="Iniciar">
-        <i class="fas fa-play"></i>
+        <FontAwesomeIcon :icon="faPlay"/>
       </button>
       <button v-if="task.status !== 'running'" @click="$emit('play-now', task.id)" class="text-yellow-400 hover:text-yellow-300" title="Iniciar agora (prioridade)">
-        <i class="fas fa-bolt"></i>
+        <FontAwesomeIcon :icon="faBoltLightning"/>
       </button>
       <button v-if="task.status === 'running'" @click="$emit('stop', task.id)" class="text-red-400 hover:text-red-300" title="Parar">
-        <i class="fas fa-stop"></i>
+        <FontAwesomeIcon :icon="faStop"/>
       </button>
     </div>
   </div>
 </template>
 
 <script setup>
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faBoltLightning, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+
 defineProps({
   task: {
     type: Object,
