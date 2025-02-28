@@ -1,5 +1,5 @@
 <template>
-  <div class="flex items-center bg-gray-700 p-3 rounded mb-2 hover:bg-gray-600 transition-colors">
+  <div class="flex items-center bg-gray-700 p-3 rounded mb-2 hover:bg-gray-600 transition-colors" @click="$emit('edit', task)">
     <div class="bg-blue-600 text-white px-2 py-1 rounded mr-3 font-mono text-sm">
       #{{ task.id }}
     </div>
@@ -31,5 +31,5 @@ defineProps({
   }
 });
 
-defineEmits(['play', 'play-now', 'stop']);
+defineEmits(['play', 'play-now', 'stop', 'edit']);
 </script>

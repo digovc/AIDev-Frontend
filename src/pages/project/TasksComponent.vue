@@ -9,17 +9,17 @@
 
     <div class="space-y-4">
       <!-- Grupos de tarefas -->
-      <TasksGroupComponent title="Backlog" :tasks="getTasksByStatus('backlog')" emptyMessage="no backlog" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop"/>
-      <TasksGroupComponent title="Em Andamento" :tasks="getTasksByStatus('running')" emptyMessage="em andamento" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop"/>
-      <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop"/>
+      <TasksGroupComponent title="Backlog" :tasks="getTasksByStatus('backlog')" emptyMessage="no backlog" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
+      <TasksGroupComponent title="Em Andamento" :tasks="getTasksByStatus('running')" emptyMessage="em andamento" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
+      <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
     </div>
 
-    <TaskFormComponent ref="taskFormRef" @task-created="onTaskCreated" :project="project"/>
+    <TaskFormComponent ref="taskFormRef" @task-created="onTaskCreated" @task-updated="onTaskUpdated" :project="project"/>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 import TaskFormComponent from './TaskFormComponent.vue';
 import TasksGroupComponent from './TasksGroupComponent.vue';
 // Adicione a importação da API de tarefas (ajuste o caminho conforme necessário)
@@ -73,6 +73,17 @@ const handleStop = (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (task) {
     task.status = 'done';
+  }
+};
+
+const handleEdit = (task) => {
+  taskFormRef.value.openForEdit(task);
+};
+
+const onTaskUpdated = (updatedTask) => {
+  const index = tasks.value.findIndex(t => t.id === updatedTask.id);
+  if (index !== -1) {
+    tasks.value[index] = updatedTask;
   }
 };
 

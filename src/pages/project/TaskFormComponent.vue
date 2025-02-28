@@ -2,7 +2,7 @@
   <dialog ref="dialogRef" class="p-0 rounded-lg shadow-lg">
     <div class="p-6 w-full">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">Nova Tarefa</h2>
+        <h2 class="text-xl font-bold">{{ isEditing ? 'Editar Tarefa' : 'Nova Tarefa' }}</h2>
         <button @click="close" class="text-gray-500 hover:text-gray-700">
           <span class="text-2xl">&times;</span>
         </button>
@@ -52,17 +52,31 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['task-created']);
+const emit = defineEmits(['task-created', 'task-updated']);
 const dialogRef = ref(null);
 const loading = ref(false);
 
+const isEditing = ref(false);
+
 const task = reactive({
+  id: null,
   title: '',
   description: '',
   status: 'backlog'
 });
 
 const open = () => {
+  isEditing.value = false;
+  resetForm();
+  dialogRef.value.showModal();
+};
+
+const openForEdit = (taskToEdit) => {
+  isEditing.value = true;
+  task.id = taskToEdit.id;
+  task.title = taskToEdit.title;
+  task.description = taskToEdit.description;
+  task.status = taskToEdit.status;
   dialogRef.value.showModal();
 };
 
@@ -72,6 +86,7 @@ const close = () => {
 };
 
 const resetForm = () => {
+  task.id = null;
   task.title = '';
   task.description = '';
   task.status = 'backlog';
@@ -85,19 +100,28 @@ const saveTask = async () => {
       projectId: props.project.id
     };
 
-    const response = await tasksApi.createTask(taskData);
-    emit('task-created', response.data);
+    let response;
+
+    if (isEditing.value) {
+      response = await tasksApi.updateTask(task.id, taskData);
+      emit('task-updated', response.data);
+    } else {
+      response = await tasksApi.createTask(taskData);
+      emit('task-created', response.data);
+    }
+
     close();
   } catch (error) {
-    console.error('Erro ao salvar tarefa:', error);
-    alert('Ocorreu um erro ao salvar a tarefa. Por favor, tente novamente.');
+    console.error(`Erro ao ${ isEditing.value ? 'atualizar' : 'salvar' } tarefa:`, error);
+    alert(`Ocorreu um erro ao ${ isEditing.value ? 'atualizar' : 'salvar' } a tarefa. Por favor, tente novamente.`);
   } finally {
     loading.value = false;
   }
 };
 
 defineExpose({
-  open
+  open,
+  openForEdit
 });
 </script>
 
