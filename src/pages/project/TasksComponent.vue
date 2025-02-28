@@ -51,7 +51,13 @@ const handlePlay = async (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (!task) return;
   task.status = 'running';
-  await tasksApi.runTask(task.id);
+
+  try {
+    await tasksApi.runTask(task.id);
+  } catch (error) {
+    task.status = 'backlog';
+    alert('Erro ao iniciar tarefa: ' + error.message);
+  }
 };
 
 const handlePlayNow = (taskId) => {
