@@ -22,10 +22,14 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
 import ChatConversationComponent from './ChatConversationComponent.vue';
 import ChatActionsComponent from './ChatActionsComponent.vue';
 import ChatInputComponent from './ChatInputComponent.vue';
 import { chatApi } from '@/api/chat.api';
+
+// Obtenha a rota atual
+const route = useRoute();
 
 // Estado para armazenar todas as conversas e a conversa selecionada
 const conversations = ref([]);
@@ -34,7 +38,8 @@ const selectedConversation = ref(null);
 // Função para carregar as conversas
 const loadConversations = async () => {
   try {
-    const response = await chatApi.getConversations();
+    const projectId = route.params.id;
+    const response = await chatApi.getConversationsByProjectId(projectId);
     conversations.value = response.data;
 
     // Seleciona a primeira conversa se existir e nenhuma estiver selecionada
@@ -51,7 +56,11 @@ const sendMessage = async (messageText) => {
   // Se não houver conversa selecionada, cria uma nova
   if (!selectedConversation.value) {
     try {
-      const response = await chatApi.createConversation({ title: 'Nova conversa' });
+      const projectId = route.params.id;
+      const response = await chatApi.createConversation({
+        title: 'Nova conversa',
+        projectId: projectId
+      });
       selectedConversation.value = response.data;
       conversations.value.push(selectedConversation.value);
     } catch (error) {
