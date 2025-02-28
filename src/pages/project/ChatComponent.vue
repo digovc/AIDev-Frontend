@@ -23,12 +23,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import ChatConversationComponent from './ChatConversationComponent.vue';
 import ChatActionsComponent from './ChatActionsComponent.vue';
 import ChatInputComponent from './ChatInputComponent.vue';
 import { conversationsApi } from '@/api/conversations.api';
+import { socketIOService } from "@/services/socket.io.js";
 
 // Obtenha a rota atual
 const route = useRoute();
@@ -36,6 +37,32 @@ const route = useRoute();
 // Estado para armazenar todas as conversas e a conversa selecionada
 const conversations = ref([]);
 const selectedConversation = ref(null);
+
+const receiveMessage = (event) => {
+  if (selectedConversation.value && selectedConversation.value.id === event.conversationId) {
+    selectedConversation.value.messages.push(event.message);
+  }
+};
+
+const receiveMessageStream = (event) => {
+  if (!selectedConversation.value || selectedConversation.value.id !== event.conversationId) {
+    return
+  }
+
+  const message = selectedConversation.value.messages.find((message) => message.id === event.messageId);
+
+  if (!message) {
+    return
+  }
+
+  if (event.event?.type === 'content_block_start') {
+    message.tempContent = '';
+  }
+
+  if (event.event?.type === 'content_block_delta') {
+    message.tempContent += event.event.delta.text;
+  }
+};
 
 // Função para carregar as conversas
 const loadConversations = async () => {
@@ -103,5 +130,13 @@ const sendMessage = async (messageText) => {
 };
 
 // Carrega as conversas ao montar o componente
-onMounted(loadConversations);
+onMounted(() => {
+  socketIOService.socket.on('message-created', receiveMessage);
+  socketIOService.socket.on('message-stream', receiveMessageStream);
+  loadConversations();
+});
+
+onUnmounted(() => {
+  socketIOService.socket.off('message-created', receiveMessage);
+});
 </script>

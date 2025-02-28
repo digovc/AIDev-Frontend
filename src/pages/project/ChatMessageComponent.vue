@@ -1,26 +1,22 @@
 <template>
-  <div
-    class="mb-3 p-3 rounded"
-    :class="message.sender === 'user' ? 'bg-gray-800' : 'bg-gray-700'"
-  >
+  <div class="mb-3 p-3 rounded" :class="message.sender === 'user' ? 'bg-gray-800' : 'bg-gray-700'">
     <div class="flex justify-between mb-1">
-      <span
-        class="font-bold"
-        :class="message.sender === 'user' ? 'text-blue-400' : 'text-green-400'"
-      >
+      <span class="font-bold" :class="message.sender === 'user' ? 'text-blue-400' : 'text-green-400'">
         {{ message.sender === 'user' ? 'Você' : 'IA' }}
-      </span>
-      <span class="text-xs text-gray-500">
+      </span> <span class="text-xs text-gray-500">
         {{ formatTime(message.timestamp) }}
       </span>
     </div>
     <div class="text-gray-300">
+      <div>{{ message.tempContent }}</div>
       <div v-for="(block, index) in message.blocks" :key="index">
         <!-- Renderiza diferentes tipos de blocos -->
         <p v-if="block.type === 'text'">{{ block.content }}</p>
-        <pre v-else-if="block.type === 'code'" class="bg-gray-900 p-2 rounded my-2 overflow-x-auto">{{ block.content }}</pre>
+        <pre v-else-if="block.type === 'code'" class="bg-gray-900 p-2 rounded my-2 overflow-x-auto">
+          {{ block.content }}
+        </pre>
         <div v-else-if="block.type === 'image'" class="my-2">
-          <img :src="block.url" :alt="block.alt || 'Imagem'" class="max-w-full rounded" />
+          <img :src="block.url" :alt="block.alt || 'Imagem'" class="max-w-full rounded"/>
         </div>
       </div>
     </div>
