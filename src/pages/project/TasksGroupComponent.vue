@@ -1,17 +1,31 @@
 <template>
-  <div class="bg-gray-800 p-4 rounded-lg">
-    <h3 class="text-xl font-semibold mb-3 text-white">{{ title }}</h3>
-    <div v-if="tasks.length === 0" class="text-gray-400 italic">
-      Nenhuma tarefa {{ emptyMessage }}
+  <div class="bg-gray-800 p-4 rounded-lg mb-4">
+    <div @click="toggleExpanded" class="flex justify-between items-center cursor-pointer">
+      <h3 class="text-xl font-semibold text-white flex items-center">
+        {{ title }} <span class="ml-2 text-gray-400 text-sm">({{ tasks.length }})</span>
+      </h3>
+      <i :class="expanded ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-gray-400"></i>
     </div>
-    <div v-for="task in tasks" :key="task.id" class="bg-gray-700 p-3 rounded mb-2">
-      <h4 class="font-bold">{{ task.title }}</h4>
-      <p class="text-sm text-gray-300">{{ task.description }}</p>
+
+    <div v-if="expanded" class="mt-3">
+      <div v-if="tasks.length === 0" class="text-gray-400 italic">
+        Nenhuma tarefa {{ emptyMessage }}
+      </div>
+      <TaskComponent v-for="task in tasks" :key="task.id" :task="task" @play="$emit('play', $event)" @play-now="$emit('play-now', $event)" @stop="$emit('stop', $event)"/>
     </div>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import TaskComponent from './TaskComponent.vue';
+
+const expanded = ref(true);
+
+const toggleExpanded = () => {
+  expanded.value = !expanded.value;
+};
+
 defineProps({
   title: {
     type: String,
@@ -26,4 +40,6 @@ defineProps({
     default: ''
   }
 });
+
+defineEmits(['play', 'play-now', 'stop']);
 </script>
