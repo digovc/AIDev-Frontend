@@ -64,12 +64,7 @@ const sendMessage = async (messageText) => {
 
       // Por enquanto, vamos criar um objeto de conversa local
       // Na prática, você precisaria adicionar um método createConversation na API
-      selectedConversation.value = {
-        id: Date.now().toString(),
-        title: 'Nova conversa',
-        messages: []
-      };
-
+      selectedConversation.value = await conversationsApi.createConversation(projectId);
       conversations.value.push(selectedConversation.value);
     } catch (error) {
       console.error('Erro ao criar conversa:', error);
@@ -94,15 +89,12 @@ const sendMessage = async (messageText) => {
   if (!selectedConversation.value.messages) {
     selectedConversation.value.messages = [];
   }
+
   selectedConversation.value.messages.push(userMessage);
 
   // Envia mensagem para a API
   try {
-    const response = await conversationsApi.sendMessage(
-        projectId,
-        selectedConversation.value.id,
-        { content: messageText }
-    );
+    const response = await conversationsApi.sendMessage(selectedConversation.value.id, { content: messageText });
 
     // Adiciona resposta da IA se houver
     if (response.data && response.data.message) {

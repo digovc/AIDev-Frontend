@@ -10,8 +10,8 @@ export class ConversationsApi extends ApiBase {
     return this.client.get(this.baseUrl, { params: { projectId } });
   }
 
-  async createConversation(conversationData) {
-    return this.client.post(this.baseUrl, conversationData);
+  async createConversation(projectId) {
+    return this.client.post(this.baseUrl, { projectId });
   }
 
   async sendMessage(conversationId, messageData) {
