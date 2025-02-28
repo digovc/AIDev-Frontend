@@ -25,6 +25,10 @@ export class TasksApi extends ApiBase {
   async deleteTask(taskId) {
     return this.client.delete(`${ this.baseUrl }/${ taskId }`);
   }
+
+  async runTask(taskId) {
+    return this.client.post(`${ this.baseUrl }/run/${ taskId }`);
+  }
 }
 
 export const tasksApi = new TasksApi();

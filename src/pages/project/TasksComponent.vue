@@ -47,11 +47,11 @@ const getTasksByStatus = (status) => {
   return tasks.value.filter(task => task.status === status);
 };
 
-const handlePlay = (taskId) => {
+const handlePlay = async (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
-  if (task) {
-    task.status = 'running';
-  }
+  if (!task) return;
+  task.status = 'running';
+  await tasksApi.runTask(task.id);
 };
 
 const handlePlayNow = (taskId) => {
