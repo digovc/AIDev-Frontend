@@ -8,9 +8,9 @@
       {{ error }}
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
       <!-- Coluna da esquerda (2/3 do espaço) -->
-      <div class="md:col-span-2 space-y-6 flex flex-col">
+      <div class="md:col-span-2 space-y-4 flex flex-col">
         <!-- Componente de informações do projeto -->
         <ProjectInfoComponent :project="project"/>
         <!-- Componente de tarefas -->
