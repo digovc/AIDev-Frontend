@@ -7,23 +7,23 @@ export class ProjectsApi extends ApiBase {
   }
 
   async getAllProjects() {
-    return this.get(this.baseUrl);
+    return this.client.get(this.baseUrl);
   }
 
   async getProjectById(id) {
-    return this.get(`${this.baseUrl}/${id}`);
+    return this.client.get(`${this.baseUrl}/${id}`);
   }
 
   async createProject(projectData) {
-    return this.post(this.baseUrl, projectData);
+    return this.client.post(this.baseUrl, projectData);
   }
 
   async updateProject(id, projectData) {
-    return this.put(`${this.baseUrl}/${id}`, projectData);
+    return this.client.put(`${this.baseUrl}/${id}`, projectData);
   }
 
   async deleteProject(id) {
-    return this.delete(`${this.baseUrl}/${id}`);
+    return this.client.delete(`${this.baseUrl}/${id}`);
   }
 }
 
