@@ -12,7 +12,7 @@
       <!-- Coluna da esquerda (2/3 do espaço) -->
       <div class="md:col-span-2 space-y-6 flex flex-col">
         <!-- Componente de informações do projeto -->
-        <ProjectInfoComponent :project="project" @go-back="goBack"/>
+        <ProjectInfoComponent :project="project"/>
         <!-- Componente de tarefas -->
         <TasksComponent class="grow"/>
       </div>
@@ -28,14 +28,13 @@
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import { projectsApi } from '@/api/projects.api';
 import ProjectInfoComponent from './ProjectInfoComponent.vue';
 import TasksComponent from './TasksComponent.vue';
 import ChatComponent from './ChatComponent.vue';
 
 const route = useRoute();
-const router = useRouter();
 const project = ref(null);
 const loading = ref(true);
 const error = ref(null);
@@ -54,8 +53,4 @@ onMounted(async () => {
     }
   }
 });
-
-const goBack = () => {
-  router.push('/');
-};
 </script>

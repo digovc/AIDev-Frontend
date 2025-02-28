@@ -5,11 +5,6 @@
     <div class="text-gray-300">
       <span class="font-semibold">Path:</span> {{ project?.path }}
     </div>
-    <div class="mt-8">
-      <button @click="$emit('go-back')" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
-        Voltar
-      </button>
-    </div>
   </div>
 </template>
 
@@ -20,6 +15,4 @@ defineProps({
     required: true
   }
 });
-
-defineEmits(['go-back']);
 </script>
