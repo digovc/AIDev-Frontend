@@ -3,8 +3,10 @@
     <h2 class="text-2xl font-bold mb-4">Chat</h2>
     <div class="flex flex-col h-full">
       <!-- Área de conversação (topo, com espaço flexível) -->
-      <div class="flex-grow overflow-y-auto mb-4">
-        <ChatConversationComponent :conversation="selectedConversation"/>
+      <div class="flex-grow overflow-y-auto mb-4 relative">
+        <div class="absolute inset-0 overflow-y-auto">
+          <ChatConversationComponent :conversation="selectedConversation"/>
+        </div>
       </div>
 
       <!-- Área de ações do chat (meio) -->
