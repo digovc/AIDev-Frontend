@@ -58,13 +58,8 @@ const sendMessage = async (messageText) => {
   // Se não houver conversa selecionada, cria uma nova
   if (!selectedConversation.value) {
     try {
-      // Aqui precisamos implementar a criação de uma nova conversa
-      // Como a API de conversações não tem um método específico para isso,
-      // precisamos adicionar essa funcionalidade ou adaptar o código
-
-      // Por enquanto, vamos criar um objeto de conversa local
-      // Na prática, você precisaria adicionar um método createConversation na API
-      selectedConversation.value = await conversationsApi.createConversation(projectId);
+      const response = await conversationsApi.createConversation(projectId);
+      selectedConversation.value = response.data;
       conversations.value.push(selectedConversation.value);
     } catch (error) {
       console.error('Erro ao criar conversa:', error);
@@ -94,7 +89,7 @@ const sendMessage = async (messageText) => {
 
   // Envia mensagem para a API
   try {
-    const response = await conversationsApi.sendMessage(selectedConversation.value.id, { content: messageText });
+    const response = await conversationsApi.sendMessage(selectedConversation.value.id, userMessage);
 
     // Adiciona resposta da IA se houver
     if (response.data && response.data.message) {
