@@ -1,5 +1,5 @@
 <template>
-  <div class="container mx-auto p-4">
+  <div class="h-full flex flex-col p-4">
     <div v-if="loading" class="text-center py-8">
       <p class="text-lg">Carregando projeto...</p>
     </div>
@@ -8,14 +8,13 @@
       {{ error }}
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
       <!-- Coluna da esquerda (2/3 do espaço) -->
-      <div class="md:col-span-2 space-y-6">
+      <div class="md:col-span-2 space-y-6 flex flex-col">
         <!-- Componente de informações do projeto -->
         <ProjectInfoComponent :project="project" @go-back="goBack"/>
-
         <!-- Componente de tarefas -->
-        <TasksComponent/>
+        <TasksComponent class="grow"/>
       </div>
 
       <!-- Coluna da direita (1/3 do espaço) -->
