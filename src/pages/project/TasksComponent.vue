@@ -72,7 +72,7 @@ const handlePlayNow = (taskId) => {
 const handleStop = (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (task) {
-    task.status = 'done';
+    task.status = 'backlog';
   }
 };
 

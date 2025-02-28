@@ -17,13 +17,13 @@
         <div class="mb-4">
           <label for="description" class="form-label">Descrição</label>
           <at-ta :members="descriptionOptions">
-            <textarea id="description" v-model="task.description" rows="3" class="form-input"></textarea>
+            <textarea id="description" v-model="task.description" rows="15" class="form-input"></textarea>
           </at-ta>
         </div>
 
-        <div class="mb-6">
+        <div class="mb-6 pointer-events-none opacity-50">
           <label for="status" class="form-label">Status</label>
-          <select id="status" v-model="task.status" class="form-input" required>
+          <select id="status" v-model="task.status" class="form-input">
             <option value="backlog">Backlog</option>
             <option value="running">Em Andamento</option>
             <option value="done">Concluído</option>
