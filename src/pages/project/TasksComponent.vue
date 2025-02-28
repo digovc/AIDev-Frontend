@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-900 rounded-lg shadow-md p-6">
+  <div class="bg-gray-900 rounded-lg shadow-md p-4 flex flex-col">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold">Tarefas</h2>
       <button @click="showTaskForm" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
@@ -7,7 +7,7 @@
       </button>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 grow">
       <!-- Coluna Backlog -->
       <div class="bg-gray-800 p-4 rounded-lg">
         <h3 class="text-xl font-semibold mb-3 text-white">Backlog</h3>
