@@ -33,6 +33,7 @@ import { projectsApi } from '@/api/projects.api';
 import ProjectInfoComponent from './ProjectInfoComponent.vue';
 import TasksComponent from './TasksComponent.vue';
 import ChatComponent from './ChatComponent.vue';
+import { socketIOService } from "@/services/socket.io.js";
 
 const route = useRoute();
 const project = ref(null);
@@ -40,6 +41,10 @@ const loading = ref(true);
 const error = ref(null);
 
 onMounted(async () => {
+  socketIOService.listen('ping', () => {
+    console.log("socket connected");
+  });
+
   if (route.params.id) {
     try {
       loading.value = true;

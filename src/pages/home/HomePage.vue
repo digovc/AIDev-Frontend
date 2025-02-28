@@ -9,7 +9,7 @@ import { onMounted } from "vue";
 import { socketIOService } from "@/services/socket.io.js";
 
 onMounted(() => {
-  socketIOService.listen(() => {
+  socketIOService.listen('ping', () => {
     console.log("socket connected");
   });
 });
