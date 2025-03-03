@@ -14,13 +14,12 @@
       <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
     </div>
 
-    <TaskFormComponent ref="taskFormRef" @task-created="onTaskCreated" @task-updated="onTaskUpdated" :project="project"/>
   </div>
 </template>
 
 <script setup>
 import { onMounted, ref } from 'vue';
-import TaskFormComponent from './TaskFormComponent.vue';
+import { useRouter } from 'vue-router';
 import TasksGroupComponent from './TasksGroupComponent.vue';
 // Adicione a importação da API de tarefas (ajuste o caminho conforme necessário)
 import { tasksApi } from '@/api/tasks.api';
@@ -32,15 +31,12 @@ const props = defineProps({
   }
 });
 
+const router = useRouter();
+
 const tasks = ref([]);
-const taskFormRef = ref(null);
 
 const showTaskForm = () => {
-  taskFormRef.value.open();
-};
-
-const onTaskCreated = (newTask) => {
-  tasks.value.push(newTask);
+  router.push(`/project/${props.project.id}/tasks/new`);
 };
 
 const getTasksByStatus = (status) => {
@@ -83,14 +79,7 @@ const handleStop = (taskId) => {
 };
 
 const handleEdit = (task) => {
-  taskFormRef.value.openForEdit(task);
-};
-
-const onTaskUpdated = (updatedTask) => {
-  const index = tasks.value.findIndex(t => t.id === updatedTask.id);
-  if (index !== -1) {
-    tasks.value[index] = updatedTask;
-  }
+  router.push(`/project/${props.project.id}/tasks/${task.id}`);
 };
 
 const loadTasks = async () => {

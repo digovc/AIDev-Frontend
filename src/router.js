@@ -17,6 +17,23 @@ const router = createRouter({
       path: '/project/:id',
       name: 'project',
       component: () => import('./pages/project/ProjectPage.vue'),
+      children: [
+        {
+          path: '',
+          name: 'tasks',
+          component: () => import('./pages/project/TasksComponent.vue'),
+        },
+        {
+          path: 'tasks/new',
+          name: 'task-new',
+          component: () => import('./pages/project/TaskFormComponent.vue'),
+        },
+        {
+          path: 'tasks/:taskId',
+          name: 'task-edit',
+          component: () => import('./pages/project/TaskFormComponent.vue'),
+        }
+      ]
     },
   ],
 })

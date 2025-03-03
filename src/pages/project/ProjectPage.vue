@@ -13,8 +13,8 @@
       <div class="md:col-span-2 space-y-4 flex flex-col">
         <!-- Componente de informações do projeto -->
         <ProjectInfoComponent :project="project"/>
-        <!-- Componente de tarefas -->
-        <TasksComponent class="grow" :project="project"/>
+        <!-- Router view para exibir tarefas ou formulário de tarefa -->
+        <RouterView v-if="project" :project="project" class="grow"></RouterView>
       </div>
 
       <!-- Coluna da direita (1/3 do espaço) -->
@@ -31,7 +31,6 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { projectsApi } from '@/api/projects.api';
 import ProjectInfoComponent from './ProjectInfoComponent.vue';
-import TasksComponent from './TasksComponent.vue';
 import ChatComponent from './ChatComponent.vue';
 
 const route = useRoute();
