@@ -85,7 +85,8 @@ const handleEdit = (task) => {
 };
 
 const loadTasks = async () => {
-  tasks.value = await tasksApi.getTasksByProjectId(props.project.id);
+  const result = await tasksApi.getTasksByProjectId(props.project.id);
+  tasks.value = result.data;
 };
 
 onMounted(loadTasks);
