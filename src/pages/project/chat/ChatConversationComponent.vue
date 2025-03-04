@@ -50,6 +50,7 @@ const scrollToBottom = async (immediate = true) => {
 const messageCreated = (message) => {
   if (message.conversationId === props.conversation.id) {
     messages.value.push(message);
+    scrollToBottom();
   }
 };
 
@@ -59,6 +60,7 @@ const blockCreated = (block) => {
   if (message) {
     message.blocks = message.blocks || [];
     message.blocks.push(block);
+    scrollToBottom();
   }
 };
 
@@ -70,6 +72,7 @@ const blockDelta = (block) => {
 
     if (localBlock) {
       localBlock.content += block.delta;
+      scrollToBottom();
     }
   }
 };
