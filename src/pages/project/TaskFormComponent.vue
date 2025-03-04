@@ -18,15 +18,6 @@
         <textarea id="description" v-model="task.description" rows="15" class="form-input"></textarea>
       </div>
 
-      <div class="mb-6 pointer-events-none opacity-50">
-        <label for="status" class="form-label">Status</label>
-        <select id="status" v-model="task.status" class="form-input">
-          <option value="backlog">Backlog</option>
-          <option value="running">Em Andamento</option>
-          <option value="done">Concluído</option>
-        </select>
-      </div>
-
       <div class="flex justify-end space-x-3">
         <button type="button" @click="goBack" class="btn btn-secondary">
           Cancelar
@@ -80,9 +71,10 @@ const saveTask = async () => {
       await tasksApi.updateTask(task.id, taskData);
       const oldTask = props.project.tasks.find(t => t.id === task.id);
       oldTask.title = task.title;
+      oldTask.status = task.status;
     } else {
       const result = await tasksApi.createTask(taskData);
-      props.project.tasks.push({ id: result.data.id, title: task.title });
+      props.project.tasks.push({ id: result.data.id, title: task.title, status: task.status });
     }
 
     // Navegar de volta para a lista de tarefas
@@ -115,7 +107,7 @@ async function loadTask() {
   } catch (error) {
     console.error('Erro ao carregar tarefa:', error);
     alert('Não foi possível carregar os dados da tarefa.');
-    router.push(`/project/${ props.project.id }`);
+    await router.push(`/project/${ props.project.id }`);
   } finally {
     loading.value = false;
   }
