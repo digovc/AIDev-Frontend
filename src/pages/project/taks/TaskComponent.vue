@@ -1,12 +1,12 @@
 <template>
   <div class="flex items-center bg-gray-700 p-3 rounded mb-2 hover:bg-gray-600 transition-colors" @click="$emit('edit', task)">
-    <div class="bg-blue-600 text-white px-2 py-1 rounded mr-3 font-mono text-sm">
+    <div class="bg-blue-600 text-white px-2 py-1 rounded font-mono text-sm mr-3">
       #{{ task.id }}
     </div>
     <div class="flex-grow">
       <h4 class="font-bold">{{ task.title }}</h4>
     </div>
-    <div class="flex space-x-4">
+    <div class="flex space-x-4 items-center">
       <button v-if="task.status !== 'running'" @click="$emit('play', task.id)" class="text-green-400 hover:text-green-300" title="Iniciar">
         <FontAwesomeIcon :icon="faPlay"/>
       </button>
@@ -16,13 +16,14 @@
       <button v-if="task.status === 'running'" @click="$emit('stop', task.id)" class="text-red-400 hover:text-red-300" title="Parar">
         <FontAwesomeIcon :icon="faStop"/>
       </button>
+      <FontAwesomeIcon :icon="faCog" class="text-orange-400 animate-spin" v-if="task.isExecuting"/>
     </div>
   </div>
 </template>
 
 <script setup>
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
-import { faBoltLightning, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
+import { faBoltLightning, faCog, faPlay, faStop } from "@fortawesome/free-solid-svg-icons";
 
 defineProps({
   task: {

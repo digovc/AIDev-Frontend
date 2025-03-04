@@ -18,10 +18,11 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TasksGroupComponent from './TasksGroupComponent.vue';
 import { tasksApi } from '@/api/tasks.api.js';
+import { socketIOService } from "@/services/socket.io.js";
 
 const props = defineProps({
   project: {
@@ -89,5 +90,28 @@ const loadTasks = async () => {
   tasks.value = result.data;
 };
 
-onMounted(loadTasks);
+const taskExecuting = (taskId) => {
+  const task = tasks.value.find(t => t.id === taskId);
+  if (task) {
+    task.isExecuting = true;
+  }
+};
+
+const taskNotExecuting = (taskId) => {
+  const task = tasks.value.find(t => t.id === taskId);
+  if (task) {
+    task.isExecuting = false;
+  }
+};
+
+onMounted(async () => {
+  await loadTasks()
+  socketIOService.socket.on('task-executing', taskExecuting);
+  socketIOService.socket.on('task-not-executing', taskNotExecuting);
+});
+
+onUnmounted(() => {
+  socketIOService.socket.off('task-executing', taskExecuting);
+  socketIOService.socket.off('task-not-executing', taskNotExecuting);
+});
 </script>
