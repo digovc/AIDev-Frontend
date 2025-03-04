@@ -24,7 +24,7 @@
 
 <script setup>
 import { computed } from "vue";
-import { faQuestion, faRobot, faServer, faToolbox, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faFileLines, faQuestion, faRobot, faServer, faToolbox, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import ChatMessageTextComponent from "@/pages/project/chat/ChatMessageTextComponent.vue";
 import ChatMessageToolComponent from "@/pages/project/chat/ChatMessageToolComponent.vue";
@@ -47,6 +47,8 @@ const sender = computed(() => {
     case 'system':
     case 'user_system':
       return 'Sistema';
+    case 'log':
+      return 'Log';
     default:
       return props.message.sender;
   }
@@ -63,13 +65,24 @@ const icon = computed(() => {
     case 'system':
     case 'user_system':
       return faServer;
+    case 'log':
+      return faFileLines;
     default:
       return faQuestion;
   }
 });
 
 const isUser = computed(() => props.message.sender === 'user');
-const isInvisible = computed(() => ['system', 'user_system'].includes(props.message.sender));
+
+const isInvisible = computed(() => {
+  if (['system', 'user_system'].includes(props.message.sender)) {
+    return true
+  }
+
+  if (props.message.blocks.length === 0) {
+    return true;
+  }
+});
 
 const formatTime = (timestamp) => {
   if (!timestamp) return '';

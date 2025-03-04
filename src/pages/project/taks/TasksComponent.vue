@@ -34,7 +34,6 @@ const props = defineProps({
 const router = useRouter();
 const emit = defineEmits(['taskSelected']);
 const tasks = ref([]);
-let clearExecutionTimeout = -1;
 
 const showTaskForm = () => {
   router.push(`/project/${ props.project.id }/tasks/new`);
@@ -98,7 +97,6 @@ const loadTasks = async () => {
 const taskExecuting = (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (task) {
-    clearTimeout(clearExecutionTimeout);
     task.isExecuting = true;
   }
 };
@@ -106,7 +104,7 @@ const taskExecuting = (taskId) => {
 const taskNotExecuting = (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (task) {
-    clearExecutionTimeout = setTimeout(() => task.isExecuting = false, 300);
+    task.isExecuting = false
   }
 };
 
