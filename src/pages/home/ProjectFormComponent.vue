@@ -16,7 +16,7 @@
 
         <div class="mb-4">
           <label for="description" class="form-label">Descrição</label>
-          <textarea id="description" v-model="project.description" rows="3" class="form-input"></textarea>
+          <textarea id="description" v-model="project.description" rows="15" class="form-input"></textarea>
         </div>
 
         <div class="mb-6">
@@ -48,7 +48,9 @@ const loading = ref(false);
 const project = reactive({
   name: '',
   description: '',
-  path: ''
+  path: '',
+  conversations: [],
+  tasks: []
 });
 
 const open = () => {
@@ -92,8 +94,7 @@ dialog::backdrop {
 
 dialog {
   border: none;
-  max-width: 500px;
-  width: 100%;
+  width: 75vw;
   position: fixed;
   top: 50%;
   left: 50%;

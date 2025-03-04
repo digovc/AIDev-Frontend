@@ -32,7 +32,7 @@ const props = defineProps({
 
 const router = useRouter();
 const emit = defineEmits(['taskSelected']);
-const tasks = computed(() => props.project?.tasks);
+const tasks = computed(() => props.project?.tasks ?? []);
 
 const showTaskForm = () => {
   router.push(`/project/${ props.project.id }/tasks/new`);
