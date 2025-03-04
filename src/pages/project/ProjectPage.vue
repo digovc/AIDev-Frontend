@@ -32,6 +32,7 @@ import { useRoute } from 'vue-router';
 import { projectsApi } from '@/api/projects.api';
 import ProjectInfoComponent from './ProjectInfoComponent.vue';
 import ChatComponent from './ChatComponent.vue';
+import { socketIOService } from "@/services/socket.io.js";
 
 const route = useRoute();
 const project = ref(null);
@@ -45,7 +46,7 @@ const handleTaskSelected = (task) => {
   }
 };
 
-onMounted(async () => {
+async function loadProject() {
   if (route.params.id) {
     try {
       loading.value = true;
@@ -58,5 +59,16 @@ onMounted(async () => {
       loading.value = false;
     }
   }
+}
+
+const conversationCreated = (conversation) => {
+  if (project.value && conversation.projectId === project.value.id) {
+    project.value.conversations.push({ id: conversation.id, title: conversation.title });
+  }
+};
+
+onMounted(async () => {
+  await loadProject();
+  socketIOService.socket.on('conversation-created', conversationCreated);
 });
 </script>

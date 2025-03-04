@@ -38,11 +38,9 @@ const props = defineProps({
   }
 });
 
-// Obtenha a rota atual
-const route = useRoute();
-
 const conversations = computed(() => props.project?.conversations);
 const conversationsFull = ref([]);
+const route = useRoute();
 const selectedConversation = ref(null);
 
 const receiveMessage = (event) => {
@@ -63,7 +61,6 @@ const receiveDelta = (event) => {
   }
 };
 
-// Função para enviar uma mensagem
 const sendMessage = async (messageText) => {
   const projectId = route.params.id;
 
@@ -113,17 +110,6 @@ const sendMessage = async (messageText) => {
   }
 };
 
-// Carrega as conversas ao montar o componente
-onMounted(() => {
-  socketIOService.socket.on('message-created', receiveMessage);
-  socketIOService.socket.on('message-delta', receiveDelta);
-});
-
-onUnmounted(() => {
-  socketIOService.socket.off('message-created', receiveMessage);
-});
-
-// Função para selecionar uma conversa
 const selectConversation = (conversation) => {
   selectedConversation.value = conversation;
 
@@ -152,6 +138,23 @@ const selectConversationById = async (conversationId) => {
     selectedConversation.value = conversation;
   }
 };
+
+const conversationCreated = (conversation) => {
+  if (props.project.id === conversation.projectId) {
+    conversationsFull.value.push(conversation);
+    selectedConversation.value = conversation;
+  }
+};
+
+onMounted(() => {
+  socketIOService.socket.on('conversation-created', conversationCreated);
+  socketIOService.socket.on('message-created', receiveMessage);
+  socketIOService.socket.on('message-delta', receiveDelta);
+});
+
+onUnmounted(() => {
+  socketIOService.socket.off('message-created', receiveMessage);
+});
 
 defineExpose({
   selectConversationById
