@@ -18,10 +18,9 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { computed } from 'vue';
 import { useRouter } from 'vue-router';
 import TasksGroupComponent from './TasksGroupComponent.vue';
-// Adicione a importação da API de tarefas (ajuste o caminho conforme necessário)
 import { tasksApi } from '@/api/tasks.api';
 
 const props = defineProps({
@@ -33,11 +32,10 @@ const props = defineProps({
 
 const router = useRouter();
 const emit = defineEmits(['taskSelected']);
-
-const tasks = ref([]);
+const tasks = computed(() => props.project?.tasks);
 
 const showTaskForm = () => {
-  router.push(`/project/${props.project.id}/tasks/new`);
+  router.push(`/project/${ props.project.id }/tasks/new`);
 };
 
 const getTasksByStatus = (status) => {
@@ -82,20 +80,7 @@ const handleStop = (taskId) => {
 };
 
 const handleEdit = (task) => {
-  router.push(`/project/${props.project.id}/tasks/${task.id}`);
+  router.push(`/project/${ props.project.id }/tasks/${ task.id }`);
   emit('taskSelected', task);
 };
-
-const loadTasks = async () => {
-  try {
-    const response = await tasksApi.getTasksByProject(props.project.id);
-    tasks.value = response.data;
-  } catch (error) {
-    console.error('Erro ao carregar tarefas:', error);
-  }
-};
-
-onMounted(() => {
-  loadTasks();
-});
 </script>

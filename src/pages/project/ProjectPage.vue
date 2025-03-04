@@ -20,7 +20,7 @@
       <!-- Coluna da direita (1/3 do espaço) -->
       <div class="md:col-span-1">
         <!-- Componente de chat -->
-        <ChatComponent ref="chatComponent"/>
+        <ChatComponent ref="chatComponent" :project="project"/>
       </div>
     </div>
   </div>
