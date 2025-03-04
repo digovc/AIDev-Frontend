@@ -7,17 +7,9 @@
         {{ formatTime(message.timestamp) }}
       </span>
     </div>
-    <div class="text-gray-300">
-      <div>{{ message.tempContent }}</div>
+    <div class="text-gray-300 overflow-y-auto">
       <div v-for="(block, index) in message.blocks" :key="index">
-        <!-- Renderiza diferentes tipos de blocos -->
-        <p v-if="block.type === 'text'">{{ block.content }}</p>
-        <pre v-else-if="block.type === 'code'" class="bg-gray-900 p-2 rounded my-2 overflow-x-auto">
-          {{ block.content }}
-        </pre>
-        <div v-else-if="block.type === 'image'" class="my-2">
-          <img :src="block.url" :alt="block.alt || 'Imagem'" class="max-w-full rounded"/>
-        </div>
+        <div v-if="block.type === 'text'">{{ block.content }}</div>
       </div>
     </div>
   </div>
