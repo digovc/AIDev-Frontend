@@ -21,17 +21,17 @@ const router = createRouter({
         {
           path: '',
           name: 'tasks',
-          component: () => import('./pages/project/TasksComponent.vue'),
+          component: () => import('./pages/project/taks/TasksComponent.vue'),
         },
         {
           path: 'tasks/new',
           name: 'task-new',
-          component: () => import('./pages/project/TaskFormComponent.vue'),
+          component: () => import('./pages/project/taks/TaskFormComponent.vue'),
         },
         {
           path: 'tasks/:taskId',
           name: 'task-edit',
-          component: () => import('./pages/project/TaskFormComponent.vue'),
+          component: () => import('./pages/project/taks/TaskFormComponent.vue'),
         }
       ]
     },

@@ -31,7 +31,7 @@ import { onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { projectsApi } from '@/api/projects.api';
 import ProjectInfoComponent from './ProjectInfoComponent.vue';
-import ChatComponent from './ChatComponent.vue';
+import ChatComponent from './chat/ChatComponent.vue';
 import { socketIOService } from "@/services/socket.io.js";
 
 const route = useRoute();

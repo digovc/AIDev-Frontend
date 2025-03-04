@@ -25,7 +25,7 @@ import { useRoute } from 'vue-router';
 import ChatConversationComponent from './ChatConversationComponent.vue';
 import ChatActionsComponent from './ChatActionsComponent.vue';
 import ChatInputComponent from './ChatInputComponent.vue';
-import { conversationsApi } from '@/api/conversations.api';
+import { conversationsApi } from '@/api/conversations.api.js';
 import { socketIOService } from "@/services/socket.io.js";
 
 const props = defineProps({

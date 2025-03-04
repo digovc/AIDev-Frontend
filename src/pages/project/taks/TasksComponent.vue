@@ -21,7 +21,7 @@
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TasksGroupComponent from './TasksGroupComponent.vue';
-import { tasksApi } from '@/api/tasks.api';
+import { tasksApi } from '@/api/tasks.api.js';
 
 const props = defineProps({
   project: {

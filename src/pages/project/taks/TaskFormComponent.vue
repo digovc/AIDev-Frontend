@@ -33,7 +33,7 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { tasksApi } from '@/api/tasks.api';
+import { tasksApi } from '@/api/tasks.api.js';
 
 const props = defineProps({
   project: {

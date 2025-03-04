@@ -10,7 +10,7 @@
 <script setup>
 import ChatMessageComponent from './ChatMessageComponent.vue';
 import { onMounted, onUnmounted, ref } from "vue";
-import { messagesApi } from '@/api/messages.api';
+import { messagesApi } from '@/api/messages.api.js';
 import { socketIOService } from "@/services/socket.io.js";
 
 const props = defineProps({
