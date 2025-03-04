@@ -25,6 +25,7 @@ import ChatActionsComponent from './ChatActionsComponent.vue';
 import ChatInputComponent from './ChatInputComponent.vue';
 import { conversationsApi } from '@/api/conversations.api.js';
 import { socketIOService } from "@/services/socket.io.js";
+import { messagesApi } from "@/api/messages.api.js";
 
 const props = defineProps({
   project: {
@@ -59,7 +60,7 @@ const sendMessage = async (text) => {
     ]
   };
 
-  await conversationsApi.sendMessage(selectedConversation.value.id, userMessage);
+  await messagesApi.sendMessage(userMessage);
 };
 
 const selectConversation = (conversation) => {
