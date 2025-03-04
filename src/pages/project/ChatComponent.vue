@@ -4,7 +4,7 @@
     <div class="flex flex-col h-full">
       <div class="flex-grow overflow-y-auto mb-4 relative">
         <div class="absolute inset-0 overflow-y-auto">
-          <ChatConversationComponent :conversation="selectedConversation"/>
+          <ChatConversationComponent :conversation="selectedConversation" v-if="selectedConversation" />
         </div>
       </div>
 
