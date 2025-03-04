@@ -34,6 +34,7 @@ const props = defineProps({
 const router = useRouter();
 const emit = defineEmits(['taskSelected']);
 const tasks = ref([]);
+let clearExecutionTimeout = -1;
 
 const showTaskForm = () => {
   router.push(`/project/${ props.project.id }/tasks/new`);
@@ -65,19 +66,23 @@ const handlePlayNow = (taskId) => {
     }
   });
 
-  // Depois, coloca a tarefa selecionada em andamento
   const task = tasks.value.find(t => t.id === taskId);
+
   if (task) {
     task.status = 'running';
     emit('taskSelected', task);
   }
 };
 
-const handleStop = (taskId) => {
+const handleStop = async (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
-  if (task) {
-    task.status = 'backlog';
+
+  if (!task) {
+    return;
   }
+
+  task.status = 'backlog';
+  await tasksApi.stopTask(task.id);
 };
 
 const handleEdit = (task) => {
@@ -93,6 +98,7 @@ const loadTasks = async () => {
 const taskExecuting = (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (task) {
+    clearTimeout(clearExecutionTimeout);
     task.isExecuting = true;
   }
 };
@@ -100,7 +106,7 @@ const taskExecuting = (taskId) => {
 const taskNotExecuting = (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (task) {
-    task.isExecuting = false;
+    clearExecutionTimeout = setTimeout(() => task.isExecuting = false, 300);
   }
 };
 
