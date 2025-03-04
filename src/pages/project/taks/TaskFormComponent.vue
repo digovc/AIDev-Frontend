@@ -10,7 +10,7 @@
     <form @submit.prevent="saveTask">
       <div class="mb-4">
         <label for="title" class="form-label">Título</label>
-        <input type="text" id="title" v-model="task.title" class="form-input" required/>
+        <input type="text" id="title" v-model="task.title" class="form-input" required autofocus/>
       </div>
 
       <div class="mb-4">

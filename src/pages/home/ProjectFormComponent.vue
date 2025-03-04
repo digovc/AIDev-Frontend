@@ -1,9 +1,9 @@
 <template>
-  <dialog ref="dialogRef" class="p-0 rounded-lg shadow-lg">
+  <dialog ref="dialogRef" class="p-0 rounded-lg shadow-lg bg-gray-900">
     <div class="p-6 w-full">
       <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">Novo Projeto</h2>
-        <button @click="close" class="text-gray-500 hover:text-gray-700">
+        <h2 class="text-xl font-bold text-white">Novo Projeto</h2>
+        <button @click="close" class="text-white">
           <span class="text-2xl">&times;</span>
         </button>
       </div>
@@ -11,7 +11,7 @@
       <form @submit.prevent="saveProject">
         <div class="mb-4">
           <label for="name" class="form-label">Nome</label>
-          <input type="text" id="name" v-model="project.name" class="form-input" required/>
+          <input type="text" id="name" v-model="project.name" class="form-input" required autofocus/>
         </div>
 
         <div class="mb-4">
