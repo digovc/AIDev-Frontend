@@ -11,7 +11,11 @@
 
       <!-- Área de ações do chat (meio) -->
       <div class="mb-3">
-        <ChatActionsComponent/>
+        <ChatActionsComponent
+          :conversations="conversations"
+          :selectedConversation="selectedConversation"
+          :onSelectConversation="selectConversation"
+        />
       </div>
 
       <!-- Área de input (parte inferior) -->
@@ -131,4 +135,9 @@ onMounted(() => {
 onUnmounted(() => {
   socketIOService.socket.off('message-created', receiveMessage);
 });
+
+// Função para selecionar uma conversa
+const selectConversation = (conversation) => {
+  selectedConversation.value = conversation;
+};
 </script>
