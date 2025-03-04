@@ -50,6 +50,7 @@ const sendMessage = async (text) => {
 
   const userMessage = {
     id: Date.now().toString(),
+    conversationId: selectedConversation.value.id,
     sender: 'user',
     timestamp: new Date().toISOString(),
     blocks: [
@@ -60,16 +61,7 @@ const sendMessage = async (text) => {
     ]
   };
 
-  if (!selectedConversation.value.messages) {
-    selectedConversation.value.messages = [];
-  }
-
-  selectedConversation.value.messages.push(userMessage);
-  const response = await conversationsApi.sendMessage(selectedConversation.value.id, userMessage);
-
-  if (response.data && response.data.message) {
-    selectedConversation.value.messages.push(response.data.message);
-  }
+  await conversationsApi.sendMessage(selectedConversation.value.id, userMessage);
 };
 
 const selectConversation = (conversation) => {
