@@ -9,9 +9,14 @@
         {{ formatTime(message.timestamp) }}
       </span>
     </div>
-    <div class="text-gray-300 overflow-y-auto">
+    <div class="text-gray-300 overflow-y-auto pt-4">
       <div v-for="(block, index) in message.blocks" :key="index">
-        <div v-if="block.type === 'text'" class="py-4">{{ block.content }}</div>
+        <div v-if="block.type === 'text'">
+          <ChatMessageTextComponent :content="block.content"/>
+        </div>
+        <div v-if="block.type === 'tool_use'">
+          <ChatMessageToolComponent :block="block"/>
+        </div>
       </div>
     </div>
   </div>
@@ -21,6 +26,7 @@
 import { computed } from "vue";
 import { faQuestion, faRobot, faServer, faToolbox, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import ChatMessageTextComponent from "@/pages/project/chat/ChatMessageTextComponent.vue";
 
 const props = defineProps({
   message: {
@@ -36,7 +42,7 @@ const sender = computed(() => {
     case 'assistant':
       return 'AIDev';
     case 'tool':
-      return 'Ferramenta';
+      return 'Ferramenta (resultado)';
     case 'system':
     case 'user_system':
       return 'Sistema';
