@@ -2,10 +2,8 @@
   <div class="bg-gray-900 rounded-lg shadow-md p-6 h-full flex flex-col">
     <h2 class="text-2xl font-bold mb-4">Chat</h2>
     <div class="flex flex-col h-full">
-      <div class="flex-grow overflow-y-auto mb-4 relative">
-        <div class="absolute inset-0 overflow-y-auto">
-          <ChatConversationComponent :conversation="selectedConversation" v-if="selectedConversation" />
-        </div>
+      <div class="flex-grow mb-4 relative">
+        <ChatConversationComponent :conversation="selectedConversation" v-if="selectedConversation"/>
       </div>
 
       <div class="mb-3">
@@ -90,7 +88,18 @@ const conversationCreated = (conversation) => {
   }
 };
 
-onMounted(() => {
+const loadConversations = async () => {
+  const projectId = route.params.id;
+  const response = await conversationsApi.getConversationsByProjectId(projectId);
+  conversations.value = response.data;
+
+  if (conversations.value.length > 0) {
+    selectedConversation.value = conversations.value[0];
+  }
+};
+
+onMounted(async () => {
+  await loadConversations();
   socketIOService.socket.on('conversation-created', conversationCreated);
 });
 
