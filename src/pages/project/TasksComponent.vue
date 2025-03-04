@@ -32,6 +32,7 @@ const props = defineProps({
 });
 
 const router = useRouter();
+const emit = defineEmits(['taskSelected']);
 
 const tasks = ref([]);
 
@@ -50,6 +51,7 @@ const handlePlay = async (taskId) => {
 
   try {
     await tasksApi.runTask(task.id);
+    emit('taskSelected', task);
   } catch (error) {
     task.status = 'backlog';
     alert('Erro ao iniciar tarefa: ' + error.message);
@@ -68,6 +70,7 @@ const handlePlayNow = (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (task) {
     task.status = 'running';
+    emit('taskSelected', task);
   }
 };
 
@@ -80,6 +83,7 @@ const handleStop = (taskId) => {
 
 const handleEdit = (task) => {
   router.push(`/project/${props.project.id}/tasks/${task.id}`);
+  emit('taskSelected', task);
 };
 
 const loadTasks = async () => {

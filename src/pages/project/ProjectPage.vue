@@ -14,13 +14,13 @@
         <!-- Componente de informações do projeto -->
         <ProjectInfoComponent :project="project"/>
         <!-- Router view para exibir tarefas ou formulário de tarefa -->
-        <RouterView v-if="project" :project="project" class="grow"></RouterView>
+        <RouterView v-if="project" :project="project" class="grow" @taskSelected="handleTaskSelected"></RouterView>
       </div>
 
       <!-- Coluna da direita (1/3 do espaço) -->
       <div class="md:col-span-1">
         <!-- Componente de chat -->
-        <ChatComponent/>
+        <ChatComponent ref="chatComponent"/>
       </div>
     </div>
   </div>
@@ -37,6 +37,13 @@ const route = useRoute();
 const project = ref(null);
 const loading = ref(true);
 const error = ref(null);
+const chatComponent = ref(null);
+
+const handleTaskSelected = (task) => {
+  if (task && task.conversationId && chatComponent.value) {
+    chatComponent.value.selectConversationById(task.conversationId);
+  }
+};
 
 onMounted(async () => {
   if (route.params.id) {

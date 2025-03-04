@@ -140,4 +140,15 @@ onUnmounted(() => {
 const selectConversation = (conversation) => {
   selectedConversation.value = conversation;
 };
+
+const selectConversationById = (conversationId) => {
+  const conversation = conversations.value.find(conv => conv.id === conversationId);
+  if (conversation) {
+    selectedConversation.value = conversation;
+  }
+};
+
+defineExpose({
+  selectConversationById
+});
 </script>
