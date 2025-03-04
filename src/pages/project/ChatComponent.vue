@@ -11,11 +11,7 @@
 
       <!-- Área de ações do chat (meio) -->
       <div class="mb-3">
-        <ChatActionsComponent
-          :conversations="conversations"
-          :selectedConversation="selectedConversation"
-          :onSelectConversation="selectConversation"
-        />
+        <ChatActionsComponent :conversations="conversations" :selectedConversation="selectedConversation" :onSelectConversation="selectConversation"/>
       </div>
 
       <!-- Área de input (parte inferior) -->
@@ -27,7 +23,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import ChatConversationComponent from './ChatConversationComponent.vue';
 import ChatActionsComponent from './ChatActionsComponent.vue';
@@ -35,11 +31,18 @@ import ChatInputComponent from './ChatInputComponent.vue';
 import { conversationsApi } from '@/api/conversations.api';
 import { socketIOService } from "@/services/socket.io.js";
 
+const props = defineProps({
+  project: {
+    type: Object,
+    required: true
+  }
+});
+
 // Obtenha a rota atual
 const route = useRoute();
 
-// Estado para armazenar todas as conversas e a conversa selecionada
-const conversations = ref([]);
+const conversations = computed(() => props.project?.conversations);
+const conversationsFull = ref([]);
 const selectedConversation = ref(null);
 
 const receiveMessage = (event) => {
@@ -60,22 +63,6 @@ const receiveDelta = (event) => {
   }
 };
 
-// Função para carregar as conversas
-const loadConversations = async () => {
-  try {
-    const projectId = route.params.id;
-    const response = await conversationsApi.getConversations(projectId);
-    conversations.value = response.data;
-
-    // Seleciona a primeira conversa se existir e nenhuma estiver selecionada
-    if (conversations.value.length > 0 && !selectedConversation.value) {
-      selectedConversation.value = conversations.value[0];
-    }
-  } catch (error) {
-    console.error('Erro ao carregar conversas:', error);
-  }
-};
-
 // Função para enviar uma mensagem
 const sendMessage = async (messageText) => {
   const projectId = route.params.id;
@@ -85,7 +72,8 @@ const sendMessage = async (messageText) => {
     try {
       const response = await conversationsApi.createConversation(projectId);
       selectedConversation.value = response.data;
-      conversations.value.push(selectedConversation.value);
+      props.project.conversations.push({ id: selectedConversation.value.id, title: selectedConversation.value.title });
+      conversationsFull.value.push(selectedConversation.value);
     } catch (error) {
       console.error('Erro ao criar conversa:', error);
       return;
@@ -129,7 +117,6 @@ const sendMessage = async (messageText) => {
 onMounted(() => {
   socketIOService.socket.on('message-created', receiveMessage);
   socketIOService.socket.on('message-delta', receiveDelta);
-  loadConversations();
 });
 
 onUnmounted(() => {
@@ -139,10 +126,28 @@ onUnmounted(() => {
 // Função para selecionar uma conversa
 const selectConversation = (conversation) => {
   selectedConversation.value = conversation;
+
+  if (conversationsFull.value.every(conv => conv.id !== conversation.id)) {
+    conversationsFull.value.push(conversation);
+  }
+
+  if (props.project.conversations.every(conv => conv.id !== conversation.id)) {
+    props.project.conversations.push({ id: conversation.id, title: conversation.title });
+  }
 };
 
-const selectConversationById = (conversationId) => {
-  const conversation = conversations.value.find(conv => conv.id === conversationId);
+const selectConversationById = async (conversationId) => {
+  const conversation = conversationsFull.value.find(conv => conv.id === conversationId);
+
+  if (!conversation) {
+    const result = await conversationsApi.getById(conversationId);
+    conversationsFull.value.push(result.data);
+
+    if (props.project.conversations.every(conv => conv.id !== result.data.id)) {
+      props.project.conversations.push({ id: result.data.id, title: result.data.title });
+    }
+  }
+
   if (conversation) {
     selectedConversation.value = conversation;
   }
