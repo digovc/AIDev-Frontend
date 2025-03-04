@@ -15,9 +15,7 @@
 
       <div class="mb-4">
         <label for="description" class="form-label">Descrição</label>
-        <at-ta :members="descriptionOptions">
-          <textarea id="description" v-model="task.description" rows="15" class="form-input"></textarea>
-        </at-ta>
+        <textarea id="description" v-model="task.description" rows="15" class="form-input"></textarea>
       </div>
 
       <div class="mb-6 pointer-events-none opacity-50">
@@ -45,7 +43,6 @@
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api';
-import AtTa from 'vue-at/dist/vue-at-textarea'
 
 const props = defineProps({
   project: {
@@ -54,15 +51,9 @@ const props = defineProps({
   }
 });
 
-const descriptionOptions = [
-  'Tarefa 1',
-  'Tarefa 2',
-];
-
 const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
-
 const isEditing = ref(false);
 
 const task = reactive({
@@ -79,6 +70,7 @@ const goBack = () => {
 const saveTask = async () => {
   try {
     loading.value = true;
+
     const taskData = {
       ...task,
       projectId: props.project.id
@@ -86,8 +78,11 @@ const saveTask = async () => {
 
     if (isEditing.value) {
       await tasksApi.updateTask(task.id, taskData);
+      const oldTask = props.project.tasks.find(t => t.id === task.id);
+      oldTask.title = task.title;
     } else {
-      await tasksApi.createTask(taskData);
+      const result = await tasksApi.createTask(taskData);
+      props.project.tasks.push({ id: result.data.id, title: task.title });
     }
 
     // Navegar de volta para a lista de tarefas
@@ -100,27 +95,34 @@ const saveTask = async () => {
   }
 };
 
-onMounted(async () => {
+async function loadTask() {
   const taskId = route.params.taskId;
-  if (taskId) {
-    isEditing.value = true;
-    try {
-      loading.value = true;
-      const response = await tasksApi.getTaskById(taskId);
-      const taskData = response.data;
-      task.id = taskData.id;
-      task.title = taskData.title;
-      task.description = taskData.description;
-      task.status = taskData.status;
-    } catch (error) {
-      console.error('Erro ao carregar tarefa:', error);
-      alert('Não foi possível carregar os dados da tarefa.');
-      router.push(`/project/${ props.project.id }`);
-    } finally {
-      loading.value = false;
-    }
+
+  if (!taskId) {
+    return;
   }
+
+  isEditing.value = true;
+
+  try {
+    loading.value = true;
+    const response = await tasksApi.getTaskById(taskId);
+    const taskData = response.data;
+    task.id = taskData.id;
+    task.title = taskData.title;
+    task.description = taskData.description;
+    task.status = taskData.status;
+  } catch (error) {
+    console.error('Erro ao carregar tarefa:', error);
+    alert('Não foi possível carregar os dados da tarefa.');
+    router.push(`/project/${ props.project.id }`);
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(async () => {
+  await loadTask();
 });
 </script>
 
-<style scoped></style>
