@@ -27,6 +27,7 @@ import { computed } from "vue";
 import { faQuestion, faRobot, faServer, faToolbox, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import ChatMessageTextComponent from "@/pages/project/chat/ChatMessageTextComponent.vue";
+import ChatMessageToolComponent from "@/pages/project/chat/ChatMessageToolComponent.vue";
 
 const props = defineProps({
   message: {
@@ -42,7 +43,7 @@ const sender = computed(() => {
     case 'assistant':
       return 'AIDev';
     case 'tool':
-      return 'Ferramenta (resultado)';
+      return 'Resultado';
     case 'system':
     case 'user_system':
       return 'Sistema';
