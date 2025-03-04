@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import ChatConversationComponent from './ChatConversationComponent.vue';
 import ChatActionsComponent from './ChatActionsComponent.vue';
@@ -38,46 +38,19 @@ const props = defineProps({
   }
 });
 
-const conversations = computed(() => props.project?.conversations);
-const conversationsFull = ref([]);
+const conversations = ref([]);
 const route = useRoute();
 const selectedConversation = ref(null);
 
-const receiveMessage = (event) => {
-  if (selectedConversation.value && selectedConversation.value.id === event.conversationId) {
-    selectedConversation.value.messages.push(event.message);
-  }
-};
-
-const receiveDelta = (event) => {
-  if (!selectedConversation.value || selectedConversation.value.id !== event.conversationId) {
-    return
-  }
-
-  const message = selectedConversation.value.messages.find((message) => message.id === event.messageId);
-
-  if (message) {
-    message.tempContent += event.delta;
-  }
-};
-
-const sendMessage = async (messageText) => {
+const sendMessage = async (text) => {
   const projectId = route.params.id;
 
-  // Se não houver conversa selecionada, cria uma nova
   if (!selectedConversation.value) {
-    try {
-      const response = await conversationsApi.createConversation(projectId);
-      selectedConversation.value = response.data;
-      props.project.conversations.push({ id: selectedConversation.value.id, title: selectedConversation.value.title });
-      conversationsFull.value.push(selectedConversation.value);
-    } catch (error) {
-      console.error('Erro ao criar conversa:', error);
-      return;
-    }
+    const response = await conversationsApi.createConversation(projectId);
+    selectedConversation.value = response.data;
+    conversations.value.push(selectedConversation.value);
   }
 
-  // Cria objeto de mensagem do usuário
   const userMessage = {
     id: Date.now().toString(),
     sender: 'user',
@@ -85,75 +58,55 @@ const sendMessage = async (messageText) => {
     blocks: [
       {
         type: 'text',
-        content: messageText
+        content: text
       }
     ]
   };
 
-  // Adiciona mensagem localmente antes da resposta da API
   if (!selectedConversation.value.messages) {
     selectedConversation.value.messages = [];
   }
 
   selectedConversation.value.messages.push(userMessage);
+  const response = await conversationsApi.sendMessage(selectedConversation.value.id, userMessage);
 
-  // Envia mensagem para a API
-  try {
-    const response = await conversationsApi.sendMessage(selectedConversation.value.id, userMessage);
-
-    // Adiciona resposta da IA se houver
-    if (response.data && response.data.message) {
-      selectedConversation.value.messages.push(response.data.message);
-    }
-  } catch (error) {
-    console.error('Erro ao enviar mensagem:', error);
+  if (response.data && response.data.message) {
+    selectedConversation.value.messages.push(response.data.message);
   }
 };
 
 const selectConversation = (conversation) => {
   selectedConversation.value = conversation;
 
-  if (conversationsFull.value.every(conv => conv.id !== conversation.id)) {
-    conversationsFull.value.push(conversation);
-  }
-
-  if (props.project.conversations.every(conv => conv.id !== conversation.id)) {
-    props.project.conversations.push({ id: conversation.id, title: conversation.title });
+  if (conversations.value.every(conv => conv.id !== conversation.id)) {
+    conversations.value.push(conversation);
   }
 };
 
 const selectConversationById = async (conversationId) => {
-  const conversation = conversationsFull.value.find(conv => conv.id === conversationId);
+  const conversation = conversations.value.find(conv => conv.id === conversationId);
 
   if (!conversation) {
     const result = await conversationsApi.getById(conversationId);
-    conversationsFull.value.push(result.data);
-
-    if (props.project.conversations.every(conv => conv.id !== result.data.id)) {
-      props.project.conversations.push({ id: result.data.id, title: result.data.title });
-    }
+    conversations.value.push(result.data);
   }
 
-  if (conversation) {
-    selectedConversation.value = conversation;
-  }
+  selectedConversation.value = conversation;
 };
 
 const conversationCreated = (conversation) => {
   if (props.project.id === conversation.projectId) {
-    conversationsFull.value.push(conversation);
+    conversations.value.push(conversation);
     selectedConversation.value = conversation;
   }
 };
 
 onMounted(() => {
   socketIOService.socket.on('conversation-created', conversationCreated);
-  socketIOService.socket.on('message-created', receiveMessage);
-  socketIOService.socket.on('message-delta', receiveDelta);
 });
 
 onUnmounted(() => {
-  socketIOService.socket.off('message-created', receiveMessage);
+  socketIOService.socket.off('conversation-created', conversationCreated);
 });
 
 defineExpose({

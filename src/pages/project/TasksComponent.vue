@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import TasksGroupComponent from './TasksGroupComponent.vue';
 import { tasksApi } from '@/api/tasks.api';
@@ -32,7 +32,7 @@ const props = defineProps({
 
 const router = useRouter();
 const emit = defineEmits(['taskSelected']);
-const tasks = computed(() => props.project?.tasks ?? []);
+const tasks = ref([]);
 
 const showTaskForm = () => {
   router.push(`/project/${ props.project.id }/tasks/new`);
@@ -83,4 +83,10 @@ const handleEdit = (task) => {
   router.push(`/project/${ props.project.id }/tasks/${ task.id }`);
   emit('taskSelected', task);
 };
+
+const loadTasks = async () => {
+  tasks.value = await tasksApi.getTasksByProjectId(props.project.id);
+};
+
+onMounted(loadTasks);
 </script>

@@ -10,6 +10,10 @@ export class ConversationsApi extends ApiBase {
     return this.client.get(`${ this.baseUrl }/${ id }`);
   }
 
+  async getTasksByProjectId(projectId) {
+    return this.client.get(`${ this.baseUrl }/project/${ projectId }`);
+  }
+
   async createConversation(projectId) {
     return this.client.post(this.baseUrl, { projectId });
   }

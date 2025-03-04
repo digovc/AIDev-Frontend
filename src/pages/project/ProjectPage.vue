@@ -47,17 +47,19 @@ const handleTaskSelected = (task) => {
 };
 
 async function loadProject() {
-  if (route.params.id) {
-    try {
-      loading.value = true;
-      const response = await projectsApi.getProjectById(route.params.id);
-      project.value = response.data;
-    } catch (e) {
-      console.error('Erro ao carregar dados do projeto:', e);
-      error.value = 'Não foi possível carregar o projeto. Tente novamente mais tarde.';
-    } finally {
-      loading.value = false;
-    }
+  if (!route.params.id) {
+    return;
+  }
+
+  try {
+    loading.value = true;
+    const response = await projectsApi.getProjectById(route.params.id);
+    project.value = response.data;
+  } catch (e) {
+    console.error('Erro ao carregar dados do projeto:', e);
+    error.value = 'Não foi possível carregar o projeto. Tente novamente mais tarde.';
+  } finally {
+    loading.value = false;
   }
 }
 
