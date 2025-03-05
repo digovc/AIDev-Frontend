@@ -11,7 +11,7 @@
       <div v-if="tasks.length === 0" class="text-gray-400 italic">
         Nenhuma tarefa {{ emptyMessage }}
       </div>
-      <TaskComponent v-for="task in tasks" :key="task.id" :task="task" @play="$emit('play', $event)" @play-now="$emit('play-now', $event)" @stop="$emit('stop', $event)" @edit="$emit('edit', $event)"/>
+      <TaskComponent v-for="task in tasks" :key="task.id" :task="task" @play="$emit('play', $event)" @play-now="$emit('play-now', $event)" @stop="$emit('stop', $event)" @edit="$emit('edit', $event)" @archive="$emit('archive', $event)"/>
     </div>
   </div>
 </template>
@@ -41,5 +41,5 @@ defineProps({
   }
 });
 
-defineEmits(['play', 'play-now', 'stop', 'edit']);
+defineEmits(['play', 'play-now', 'stop', 'edit', 'archive']);
 </script>

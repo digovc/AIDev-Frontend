@@ -11,7 +11,7 @@
       <!-- Grupos de tarefas -->
       <TasksGroupComponent title="Backlog" :tasks="getTasksByStatus('backlog')" emptyMessage="no backlog" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
       <TasksGroupComponent title="Em Andamento" :tasks="getTasksByStatus('running')" emptyMessage="em andamento" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
-      <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
+      <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit" @archive="handleArchive"/>
     </div>
 
   </div>
@@ -33,6 +33,16 @@ const props = defineProps({
 
 const router = useRouter();
 const emit = defineEmits(['taskSelected']);
+
+const handleArchive = async (taskId) => {
+  try {
+    await tasksApi.archiveTasks(props.project.id, [taskId]);
+    // Remove a tarefa arquivada da lista
+    tasks.value = tasks.value.filter(t => t.id !== taskId);
+  } catch (error) {
+    alert('Erro ao arquivar tarefa: ' + error.message);
+  }
+};
 const tasks = ref([]);
 
 const showTaskForm = () => {

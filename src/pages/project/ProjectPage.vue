@@ -13,8 +13,11 @@
       <div class="md:col-span-2 space-y-4 flex flex-col">
         <!-- Componente de informações do projeto -->
         <ProjectInfoComponent :project="project"/>
-        <!-- Router view para exibir tarefas ou formulário de tarefa -->
-        <RouterView v-if="project" :project="project" class="grow" @taskSelected="handleTaskSelected"></RouterView>
+        <div class="relative grow overflow-y-auto">
+          <!-- Router view para exibir tarefas ou formulário de tarefa -->
+          <RouterView v-if="project" :project="project" class="h-full absolute inset-0"
+                      @taskSelected="handleTaskSelected"></RouterView>
+        </div>
       </div>
 
       <!-- Coluna da direita (1/3 do espaço) -->
