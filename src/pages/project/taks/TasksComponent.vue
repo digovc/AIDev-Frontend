@@ -9,8 +9,8 @@
 
     <div class="space-y-4">
       <!-- Grupos de tarefas -->
-      <TasksGroupComponent title="Backlog" :tasks="getTasksByStatus('backlog')" emptyMessage="no backlog" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
-      <TasksGroupComponent title="Em Andamento" :tasks="getTasksByStatus('running')" emptyMessage="em andamento" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit"/>
+      <TasksGroupComponent title="Backlog" :tasks="getTasksByStatus('backlog')" emptyMessage="no backlog" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit" @done="handleDone" @archive="handleArchive"/>
+      <TasksGroupComponent title="Em Andamento" :tasks="getTasksByStatus('running')" emptyMessage="em andamento" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit" @done="handleDone" @archive="handleArchive"/>
       <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit" @archive="handleArchive"/>
     </div>
 
@@ -32,7 +32,16 @@ const props = defineProps({
 });
 
 const router = useRouter();
+
 const emit = defineEmits(['taskSelected']);
+const tasks = ref([]);
+const showTaskForm = () => {
+  router.push(`/project/${ props.project.id }/tasks/new`);
+};
+
+const getTasksByStatus = (status) => {
+  return tasks.value.filter(task => task.status === status);
+};
 
 const handleArchive = async (taskId) => {
   try {
@@ -42,15 +51,6 @@ const handleArchive = async (taskId) => {
   } catch (error) {
     alert('Erro ao arquivar tarefa: ' + error.message);
   }
-};
-const tasks = ref([]);
-
-const showTaskForm = () => {
-  router.push(`/project/${ props.project.id }/tasks/new`);
-};
-
-const getTasksByStatus = (status) => {
-  return tasks.value.filter(task => task.status === status);
 };
 
 const handlePlay = async (taskId) => {
@@ -94,9 +94,29 @@ const handleStop = async (taskId) => {
   await tasksApi.stopTask(task.id);
 };
 
+const handleDone = async (taskId) => {
+  const task = tasks.value.find(t => t.id === taskId);
+
+  if (!task) {
+    return;
+  }
+
+  await markTaskAsDone(task);
+};
+
 const handleEdit = (task) => {
   router.push(`/project/${ props.project.id }/tasks/${ task.id }`);
   emit('taskSelected', task);
+};
+
+const markTaskAsDone = async (task) => {
+  task.status = 'done';
+  try {
+    await tasksApi.completeTask(task.id);
+  } catch (error) {
+    task.status = 'running';
+    alert('Erro ao concluir tarefa: ' + error.message);
+  }
 };
 
 const loadTasks = async () => {

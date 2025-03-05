@@ -37,6 +37,10 @@ export class TasksApi extends ApiBase {
   async archiveTasks(projectId, taskIds) {
     return this.client.post(`${ this.baseUrl }/archive`, { projectId, taskIds });
   }
+
+  async completeTask(taskId) {
+    return this.client.post(`${ this.baseUrl }/complete/${ taskId }`);
+  }
 }
 
 export const tasksApi = new TasksApi();
