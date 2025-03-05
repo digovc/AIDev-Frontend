@@ -38,7 +38,7 @@
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api.js';
-import ReferencesDialog from '@/components/ReferencesDialog.vue';
+import ReferencesDialog from '@/pages/project/taks/ReferencesDialog.vue';
 
 const props = defineProps({
   project: {
