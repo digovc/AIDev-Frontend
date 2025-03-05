@@ -18,12 +18,27 @@
         <textarea id="description" v-model="task.description" rows="15" class="form-input"></textarea>
       </div>
 
+      <!-- Adicione esta nova seção para listar as referências -->
+      <div class="mb-4">
+        <div class="flex justify-between items-center mb-2">
+          <label class="form-label">Referências</label>
+          <button type="button" @click="openReferencesDialog" class="btn btn-secondary btn-sm">
+            Adicionar Referência
+          </button>
+        </div>
+
+        <div v-if="task.references.length === 0" class="text-gray-500 italic p-2">
+          Nenhuma referência adicionada
+        </div>
+
+        <div v-else class="space-y-2 max-h-60 overflow-y-auto pt-3">
+          <ReferenceComponent v-for="(ref, index) in task.references" :key="index" :reference="ref" @remove="removeReference(index)"/>
+        </div>
+      </div>
+
       <div class="flex justify-end space-x-3">
         <button type="button" @click="goBack" class="btn btn-secondary">
           Cancelar
-        </button>
-        <button type="button" @click="openReferencesDialog" class="btn btn-secondary">
-          Referências
         </button>
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Salvando...' : 'Salvar' }}
@@ -39,6 +54,7 @@ import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api.js';
 import ReferencesDialog from '@/pages/project/taks/ReferencesDialog.vue';
+import ReferenceComponent from '@/components/ReferenceComponent.vue';
 
 const props = defineProps({
   project: {
@@ -127,6 +143,10 @@ const openReferencesDialog = () => {
 
 const updateReferences = (newReferences) => {
   task.references = newReferences;
+};
+
+const removeReference = (index) => {
+  task.references.splice(index, 1);
 };
 
 onMounted(async () => {
