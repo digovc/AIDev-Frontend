@@ -1,7 +1,7 @@
 <template>
   <div class="bg-gray-900 rounded-lg shadow-md p-4 flex flex-col">
     <div class="flex justify-between items-center mb-4">
-      <h2 class="text-xl font-bold">{{ isEditing ? 'Editar Tarefa' : 'Nova Tarefa' }}</h2>
+      <h2 class="text-xl font-bold">{{ isEditing ? `Editar Tarefa (${ task.id })` : 'Nova Tarefa' }}</h2>
       <button @click="goBack" class="text-gray-500 hover:text-gray-700">
         <span class="text-2xl">&times;</span>
       </button>

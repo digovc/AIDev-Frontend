@@ -7,11 +7,7 @@
       </div>
 
       <div class="mb-3">
-        <ChatActionsComponent
-          :conversations="conversations"
-          :selectedConversation="selectedConversation"
-          :onSelectConversation="selectConversation"
-          :onCreateNewConversation="createNewConversation"/>
+        <ChatActionsComponent :conversations="conversations" :selectedConversation="selectedConversation" :onSelectConversation="selectConversation" :onCreateNewConversation="createNewConversation"/>
       </div>
 
       <div>
@@ -51,13 +47,16 @@ const sendMessage = async (text) => {
     conversations.value.push(selectedConversation.value);
   }
 
+  const now = new Date();
+
   const userMessage = {
-    id: Date.now().toString(),
+    id: now.getTime(),
     conversationId: selectedConversation.value.id,
     sender: 'user',
-    timestamp: new Date().toISOString(),
+    timestamp: now.toISOString(),
     blocks: [
       {
+        id: now.getTime() + 1,
         type: 'text',
         content: text
       }
@@ -95,6 +94,18 @@ const selectConversationById = async (conversationId) => {
 };
 
 const conversationCreated = (conversation) => {
+  if (!props.project) {
+    return;
+  }
+
+  if (!conversations.value) {
+    conversations.value = [];
+  }
+
+  if (conversations.value.some(conv => conv.id === conversation.id)) {
+    return;
+  }
+
   if (props.project.id === conversation.projectId) {
     conversations.value.push(conversation);
     selectedConversation.value = conversation;
