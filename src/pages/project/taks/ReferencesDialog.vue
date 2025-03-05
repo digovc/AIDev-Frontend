@@ -13,10 +13,10 @@
         <input type="text" v-model="searchQuery" @keydown="handleKeyDown" placeholder="Pesquisar referências..." class="form-input w-full" autofocus/>
 
         <!-- Resultados da pesquisa -->
-        <div v-if="searchResults.length > 0" class="absolute z-10 w-full mt-1 bg-gray-800 rounded-md shadow-lg max-h-60 overflow-y-auto">
-          <div v-for="(result, idx) in searchResults" :key="idx" @click="handleKeyDown($event)" :class="['p-2 cursor-pointer hover:bg-gray-700', selectedIndex === idx ? 'bg-gray-700' : '']">
-            <div class="font-medium">{{ result.name }}</div>
-            <div class="text-sm text-gray-200 truncate">{{ result.path }}</div>
+        <div v-if="searchResults.length > 0" ref="searchResultsRef" class="absolute z-10 w-full mt-1 bg-gray-800 rounded-md shadow-lg max-h-80 overflow-y-auto">
+          <div v-for="(result, idx) in searchResults" :key="idx" @click="handleKeyDown($event)" :class="['p-1 cursor-pointer hover:bg-gray-700 text-sm', selectedIndex === idx ? 'bg-gray-700' : '']">
+            <div>{{ result.name }}</div>
+            <div class="text-xs text-gray-200 truncate">{{ result.path }}</div>
           </div>
         </div>
 
@@ -41,7 +41,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, nextTick } from 'vue';
 import { referencesApi } from '@/api/references.api';
 import ReferenceComponent from '@/components/ReferenceComponent.vue';
 import { debounce } from 'lodash'
@@ -65,6 +65,7 @@ const references = ref([...props.taskReferences]);
 const searchQuery = ref('');
 const searchResults = ref([]);
 const selectedIndex = ref(-1);
+const searchResultsRef = ref(null);
 
 watch(searchQuery, () => {
   selectedIndex.value = -1;
@@ -119,6 +120,15 @@ const searchReferences = debounce(async () => {
   }
 }, 500);
 
+const scrollToSelectedItem = () => {
+  if (searchResultsRef.value && selectedIndex.value !== -1) {
+    const selectedElement = searchResultsRef.value.querySelector(`:nth-child(${selectedIndex.value + 1})`);
+    if (selectedElement) {
+      selectedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    }
+  }
+};
+
 const handleKeyDown = (e) => {
   if (e.key === 'Escape') {
     close();
@@ -130,9 +140,11 @@ const handleKeyDown = (e) => {
   if (e.key === 'ArrowDown') {
     e.preventDefault();
     selectedIndex.value = (selectedIndex.value + 1) % searchResults.value.length;
+    nextTick(scrollToSelectedItem);
   } else if (e.key === 'ArrowUp') {
     e.preventDefault();
     selectedIndex.value = selectedIndex.value <= 0 ? searchResults.value.length - 1 : selectedIndex.value - 1;
+    nextTick(scrollToSelectedItem);
   } else if ((e.key === 'Enter' || e.type === 'click') && selectedIndex.value >= 0) {
     e.preventDefault();
     addSelectedReference();
