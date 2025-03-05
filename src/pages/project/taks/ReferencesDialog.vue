@@ -1,5 +1,5 @@
 <template>
-  <dialog ref="dialogRef" class="p-0 rounded-lg shadow-lg bg-gray-900">
+  <dialog ref="dialogRef" class="p-0 rounded-lg shadow-lg bg-gray-900 text-white">
     <div class="p-6 w-full">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-white">Referências</h2>
@@ -10,24 +10,24 @@
 
       <!-- Campo de pesquisa -->
       <div class="mb-4 relative">
-        <input type="text" v-model="searchQuery" @keydown="handleKeyDown" placeholder="Pesquisar referências..." class="form-input w-full"/>
+        <input type="text" v-model="searchQuery" @keydown="handleKeyDown" placeholder="Pesquisar referências..." class="form-input w-full" autofocus/>
 
         <!-- Resultados da pesquisa -->
         <div v-if="searchResults.length > 0" class="absolute z-10 w-full mt-1 bg-gray-800 rounded-md shadow-lg max-h-60 overflow-y-auto">
           <div v-for="(result, idx) in searchResults" :key="idx" @click="selectedIndex = idx; addSelectedReference()" :class="['p-2 cursor-pointer hover:bg-gray-700', selectedIndex === idx ? 'bg-gray-700' : '']">
-            <div class="font-medium">{{ result.title }}</div>
-            <div class="text-sm text-gray-400 truncate">{{ result.url }}</div>
+            <div class="font-medium">{{ result.name }}</div>
+            <div class="text-sm text-gray-200 truncate">{{ result.path }}</div>
           </div>
         </div>
 
-        <div v-if="isSearching" class="mt-2 text-sm text-gray-400">
+        <div v-if="isSearching" class="mt-2 text-sm text-gray-300">
           Buscando...
         </div>
       </div>
 
       <!-- Lista de referências adicionadas -->
       <div class="mb-4">
-        <h3 class="text-lg font-semibold mb-2">Referências Adicionadas</h3>
+        <h3 class="text-lg font-semibold mb-2">Adicionadas</h3>
 
         <div v-if="references.length === 0" class="text-gray-400 text-center py-4">
           Nenhuma referência adicionada
@@ -55,43 +55,55 @@
 import { ref, watch } from 'vue';
 import { referencesApi } from '@/api/references.api';
 import ReferenceComponent from '@/components/ReferenceComponent.vue';
-import { debounce } from 'lodash'; // Certifique-se de que lodash está instalado
+import { debounce } from 'lodash'
 
 const props = defineProps({
+  project: {
+    type: Object,
+    required: true
+  },
   taskReferences: {
     type: Array,
     default: () => []
   }
 });
 
-const emit = defineEmits(['update:references']);
 const dialogRef = ref(null);
+const emit = defineEmits(['update:references']);
+const isSearching = ref(false);
 const loading = ref(false);
 const references = ref([...props.taskReferences]);
-
 const searchQuery = ref('');
 const searchResults = ref([]);
-const isSearching = ref(false);
 const selectedIndex = ref(-1);
+
+watch(searchQuery, () => {
+  selectedIndex.value = -1;
+  searchReferences();
+});
 
 const open = () => {
   references.value = [...props.taskReferences];
   dialogRef.value.showModal();
+
 };
 
 const close = () => {
   dialogRef.value.close();
   resetForm();
+
 };
 
 const resetForm = () => {
   searchQuery.value = '';
   searchResults.value = [];
   selectedIndex.value = -1;
+
 };
 
 const removeReference = (index) => {
   references.value.splice(index, 1);
+
 };
 
 const saveReferences = () => {
@@ -104,6 +116,7 @@ const saveReferences = () => {
   } finally {
     loading.value = false;
   }
+
 };
 
 const searchReferences = debounce(async () => {
@@ -114,7 +127,7 @@ const searchReferences = debounce(async () => {
 
   isSearching.value = true;
   try {
-    const response = await referencesApi.search(searchQuery.value);
+    const response = await referencesApi.search(props.project.id, searchQuery.value);
     searchResults.value = response.data || [];
     selectedIndex.value = searchResults.value.length > 0 ? 0 : -1;
   } catch (error) {
@@ -124,11 +137,6 @@ const searchReferences = debounce(async () => {
     isSearching.value = false;
   }
 }, 500);
-
-watch(searchQuery, () => {
-  selectedIndex.value = -1;
-  searchReferences();
-});
 
 const handleKeyDown = (e) => {
   if (searchResults.value.length === 0) return;
@@ -149,8 +157,8 @@ const addSelectedReference = () => {
   if (selectedIndex.value >= 0 && searchResults.value[selectedIndex.value]) {
     const selected = searchResults.value[selectedIndex.value];
     references.value.push({
-      title: selected.title,
-      url: selected.url
+      name: selected.name,
+      path: selected.path
     });
     searchQuery.value = '';
     searchResults.value = [];

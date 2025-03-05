@@ -31,7 +31,7 @@
       </div>
     </form>
   </div>
-  <ReferencesDialog ref="referencesDialog" :task-references="task.references" @update:references="updateReferences"/>
+  <ReferencesDialog ref="referencesDialog" :project="project" :task-references="task.references" @update:references="updateReferences"/>
 </template>
 
 <script setup>

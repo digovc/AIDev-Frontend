@@ -6,8 +6,8 @@ export class ReferencesApi extends ApiBase {
     this.baseUrl = '/references';
   }
 
-  async search(query) {
-    return this.client.get(`${this.baseUrl}/search`, {
+  async search(projectId, query) {
+    return this.client.get(`${this.baseUrl}/search/project/${projectId}`, {
       params: { query }
     });
   }
