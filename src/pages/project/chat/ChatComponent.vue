@@ -7,7 +7,11 @@
       </div>
 
       <div class="mb-3">
-        <ChatActionsComponent :conversations="conversations" :selectedConversation="selectedConversation" :onSelectConversation="selectConversation"/>
+        <ChatActionsComponent
+          :conversations="conversations"
+          :selectedConversation="selectedConversation"
+          :onSelectConversation="selectConversation"
+          :onCreateNewConversation="createNewConversation"/>
       </div>
 
       <div>
@@ -69,6 +73,14 @@ const selectConversation = (conversation) => {
   if (conversations.value.every(conv => conv.id !== conversation.id)) {
     conversations.value.push(conversation);
   }
+};
+
+const createNewConversation = async () => {
+  const projectId = route.params.id;
+  const response = await conversationsApi.createConversation(projectId);
+  const newConversation = response.data;
+  conversations.value.push(newConversation);
+  selectedConversation.value = newConversation;
 };
 
 const selectConversationById = async (conversationId) => {
