@@ -8,39 +8,36 @@
         </button>
       </div>
 
+      <!-- Campo de pesquisa -->
+      <div class="mb-4 relative">
+        <input type="text" v-model="searchQuery" @keydown="handleKeyDown" placeholder="Pesquisar referências..." class="form-input w-full"/>
+
+        <!-- Resultados da pesquisa -->
+        <div v-if="searchResults.length > 0" class="absolute z-10 w-full mt-1 bg-gray-800 rounded-md shadow-lg max-h-60 overflow-y-auto">
+          <div v-for="(result, idx) in searchResults" :key="idx" @click="selectedIndex = idx; addSelectedReference()" :class="['p-2 cursor-pointer hover:bg-gray-700', selectedIndex === idx ? 'bg-gray-700' : '']">
+            <div class="font-medium">{{ result.title }}</div>
+            <div class="text-sm text-gray-400 truncate">{{ result.url }}</div>
+          </div>
+        </div>
+
+        <div v-if="isSearching" class="mt-2 text-sm text-gray-400">
+          Buscando...
+        </div>
+      </div>
+
+      <!-- Lista de referências adicionadas -->
       <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-2">Referências Adicionadas</h3>
+
         <div v-if="references.length === 0" class="text-gray-400 text-center py-4">
           Nenhuma referência adicionada
         </div>
 
-        <ul v-else class="space-y-2">
-          <li v-for="(ref, index) in references" :key="index" class="flex justify-between items-center p-2 bg-gray-800 rounded">
-            <div>
-              <div class="font-medium">{{ ref.title }}</div>
-              <div class="text-sm text-gray-400">{{ ref.url }}</div>
-            </div>
-            <button @click="removeReference(index)" class="text-red-500 hover:text-red-700">
-              <span class="text-xl">&times;</span>
-            </button>
-          </li>
-        </ul>
+        <div v-else class="grid gap-3">
+          <ReferenceComponent v-for="(ref, index) in references" :key="index" :reference="ref" @remove="removeReference(index)"/>
+        </div>
       </div>
 
-      <form @submit.prevent="addReference" class="mb-4 border-t border-gray-700 pt-4">
-        <div class="mb-3">
-          <label for="refTitle" class="form-label">Título</label>
-          <input type="text" id="refTitle" v-model="newReference.title" class="form-input" required/>
-        </div>
-
-        <div class="mb-3">
-          <label for="refUrl" class="form-label">URL</label>
-          <input type="url" id="refUrl" v-model="newReference.url" class="form-input" required/>
-        </div>
-
-        <div class="flex justify-end">
-          <button type="submit" class="btn btn-primary">Adicionar</button>
-        </div>
-      </form>
 
       <div class="flex justify-end space-x-3 mt-4 pt-4 border-t border-gray-700">
         <button type="button" @click="close" class="btn btn-secondary">
@@ -55,7 +52,10 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { ref, watch } from 'vue';
+import { referencesApi } from '@/api/references.api';
+import ReferenceComponent from '@/components/ReferenceComponent.vue';
+import { debounce } from 'lodash'; // Certifique-se de que lodash está instalado
 
 const props = defineProps({
   taskReferences: {
@@ -69,10 +69,10 @@ const dialogRef = ref(null);
 const loading = ref(false);
 const references = ref([...props.taskReferences]);
 
-const newReference = reactive({
-  title: '',
-  url: ''
-});
+const searchQuery = ref('');
+const searchResults = ref([]);
+const isSearching = ref(false);
+const selectedIndex = ref(-1);
 
 const open = () => {
   references.value = [...props.taskReferences];
@@ -85,16 +85,9 @@ const close = () => {
 };
 
 const resetForm = () => {
-  newReference.title = '';
-  newReference.url = '';
-};
-
-const addReference = () => {
-  references.value.push({
-    title: newReference.title,
-    url: newReference.url
-  });
-  resetForm();
+  searchQuery.value = '';
+  searchResults.value = [];
+  selectedIndex.value = -1;
 };
 
 const removeReference = (index) => {
@@ -110,6 +103,57 @@ const saveReferences = () => {
     console.error('Erro ao salvar referências:', error);
   } finally {
     loading.value = false;
+  }
+};
+
+const searchReferences = debounce(async () => {
+  if (!searchQuery.value.trim()) {
+    searchResults.value = [];
+    return;
+  }
+
+  isSearching.value = true;
+  try {
+    const response = await referencesApi.search(searchQuery.value);
+    searchResults.value = response.data || [];
+    selectedIndex.value = searchResults.value.length > 0 ? 0 : -1;
+  } catch (error) {
+    console.error('Erro ao buscar referências:', error);
+    searchResults.value = [];
+  } finally {
+    isSearching.value = false;
+  }
+}, 500);
+
+watch(searchQuery, () => {
+  selectedIndex.value = -1;
+  searchReferences();
+});
+
+const handleKeyDown = (e) => {
+  if (searchResults.value.length === 0) return;
+
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    selectedIndex.value = (selectedIndex.value + 1) % searchResults.value.length;
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    selectedIndex.value = selectedIndex.value <= 0 ? searchResults.value.length - 1 : selectedIndex.value - 1;
+  } else if (e.key === 'Enter' && selectedIndex.value >= 0) {
+    e.preventDefault();
+    addSelectedReference();
+  }
+};
+
+const addSelectedReference = () => {
+  if (selectedIndex.value >= 0 && searchResults.value[selectedIndex.value]) {
+    const selected = searchResults.value[selectedIndex.value];
+    references.value.push({
+      title: selected.title,
+      url: selected.url
+    });
+    searchQuery.value = '';
+    searchResults.value = [];
   }
 };
 
