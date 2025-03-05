@@ -4,7 +4,9 @@
       <div v-if="conversation && messages && messages.length > 0" class="pr-2">
         <ChatMessageComponent v-for="message in messages" :key="message.id" :message="message"/>
       </div>
-      <p v-else class="text-gray-500 italic">Histórico de mensagens aparecerá aqui</p>
+      <div v-else class="text-gray-500 italic h-full flex items-center justify-center">Histórico de mensagens aparecerá
+        aqui
+      </div>
     </div>
   </div>
 </template>

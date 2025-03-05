@@ -11,10 +11,7 @@
     <!-- Botões de ação do chat -->
     <div class="flex space-x-2">
       <!-- Adicione este botão após o select -->
-      <button
-        @click="createNewConversation"
-        class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center justify-center"
-        title="Nova conversa">
+      <button @click="createNewConversation" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center justify-center" title="Nova conversa">
         <span class="text-lg font-bold">+</span>
       </button>
       <!--      <button class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">-->

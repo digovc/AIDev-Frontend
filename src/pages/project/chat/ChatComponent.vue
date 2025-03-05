@@ -11,7 +11,7 @@
       </div>
 
       <div>
-        <ChatInputComponent :onSendMessage="sendMessage"/>
+        <ChatInputComponent :onSendMessage="sendMessage" v-if="selectedConversation"/>
       </div>
     </div>
   </div>
