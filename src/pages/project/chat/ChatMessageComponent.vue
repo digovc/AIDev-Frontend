@@ -17,6 +17,9 @@
         <div v-if="block.type === 'tool_use'">
           <ChatMessageToolComponent :block="block"/>
         </div>
+        <div v-if="block.type === 'tool_result'">
+          <ChatMessageToolResultComponent :block="block"/>
+        </div>
       </div>
     </div>
   </div>
@@ -28,6 +31,7 @@ import { faFileLines, faQuestion, faRobot, faServer, faToolbox, faUser } from "@
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import ChatMessageTextComponent from "@/pages/project/chat/ChatMessageTextComponent.vue";
 import ChatMessageToolComponent from "@/pages/project/chat/ChatMessageToolComponent.vue";
+import ChatMessageToolResultComponent from "@/pages/project/chat/ChatMessageToolResultComponent.vue";
 
 const props = defineProps({
   message: {
