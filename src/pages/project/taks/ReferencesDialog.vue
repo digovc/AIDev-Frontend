@@ -1,6 +1,6 @@
 <template>
   <dialog ref="dialogRef" class="p-0 rounded-lg shadow-lg bg-gray-900 text-white">
-    <div class="p-6 w-full">
+    <div class="p-6 w-full h-full flex flex-col space-y-4">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold text-white">Referências</h2>
         <button @click="close" class="text-white">
@@ -14,7 +14,7 @@
 
         <!-- Resultados da pesquisa -->
         <div v-if="searchResults.length > 0" class="absolute z-10 w-full mt-1 bg-gray-800 rounded-md shadow-lg max-h-60 overflow-y-auto">
-          <div v-for="(result, idx) in searchResults" :key="idx" @click="selectedIndex = idx; addSelectedReference()" :class="['p-2 cursor-pointer hover:bg-gray-700', selectedIndex === idx ? 'bg-gray-700' : '']">
+          <div v-for="(result, idx) in searchResults" :key="idx" @click="handleKeyDown($event)" :class="['p-2 cursor-pointer hover:bg-gray-700', selectedIndex === idx ? 'bg-gray-700' : '']">
             <div class="font-medium">{{ result.name }}</div>
             <div class="text-sm text-gray-200 truncate">{{ result.path }}</div>
           </div>
@@ -26,26 +26,15 @@
       </div>
 
       <!-- Lista de referências adicionadas -->
-      <div class="mb-4">
-        <h3 class="text-lg font-semibold mb-2">Adicionadas</h3>
-
-        <div v-if="references.length === 0" class="text-gray-400 text-center py-4">
+      <div class="grow">
+        <div v-if="references.length === 0"
+             class="text-gray-400 text-center py-4 h-full flex items-center justify-center">
           Nenhuma referência adicionada
         </div>
 
         <div v-else class="grid gap-3">
           <ReferenceComponent v-for="(ref, index) in references" :key="index" :reference="ref" @remove="removeReference(index)"/>
         </div>
-      </div>
-
-
-      <div class="flex justify-end space-x-3 mt-4 pt-4 border-t border-gray-700">
-        <button type="button" @click="close" class="btn btn-secondary">
-          Fechar
-        </button>
-        <button type="button" @click="saveReferences" class="btn btn-primary" :disabled="loading">
-          {{ loading ? 'Salvando...' : 'Salvar' }}
-        </button>
       </div>
     </div>
   </dialog>
@@ -106,18 +95,7 @@ const removeReference = (index) => {
 
 };
 
-const saveReferences = () => {
-  loading.value = true;
-  try {
-    emit('update:references', references.value);
-    close();
-  } catch (error) {
-    console.error('Erro ao salvar referências:', error);
-  } finally {
-    loading.value = false;
-  }
-
-};
+// Método removido, pois a atualização de referências agora acontece em tempo real
 
 const searchReferences = debounce(async () => {
   if (!searchQuery.value.trim()) {
@@ -128,7 +106,10 @@ const searchReferences = debounce(async () => {
   isSearching.value = true;
   try {
     const response = await referencesApi.search(props.project.id, searchQuery.value);
-    searchResults.value = response.data || [];
+    // Filtra referências que ainda não foram adicionadas
+    searchResults.value = (response.data || []).filter(
+      result => !references.value.some(ref => ref.path === result.path)
+    );
     selectedIndex.value = searchResults.value.length > 0 ? 0 : -1;
   } catch (error) {
     console.error('Erro ao buscar referências:', error);
@@ -139,6 +120,11 @@ const searchReferences = debounce(async () => {
 }, 500);
 
 const handleKeyDown = (e) => {
+  if (e.key === 'Escape') {
+    close();
+    return;
+  }
+
   if (searchResults.value.length === 0) return;
 
   if (e.key === 'ArrowDown') {
@@ -147,9 +133,11 @@ const handleKeyDown = (e) => {
   } else if (e.key === 'ArrowUp') {
     e.preventDefault();
     selectedIndex.value = selectedIndex.value <= 0 ? searchResults.value.length - 1 : selectedIndex.value - 1;
-  } else if (e.key === 'Enter' && selectedIndex.value >= 0) {
+  } else if ((e.key === 'Enter' || e.type === 'click') && selectedIndex.value >= 0) {
     e.preventDefault();
     addSelectedReference();
+    // Não fecha a lista, mantém o foco no input
+    searchQuery.value = '';
   }
 };
 
@@ -162,6 +150,7 @@ const addSelectedReference = () => {
     });
     searchQuery.value = '';
     searchResults.value = [];
+    emit('update:references', references.value);
   }
 };
 
