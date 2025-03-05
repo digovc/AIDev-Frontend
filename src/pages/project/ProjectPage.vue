@@ -27,7 +27,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
 import { projectsApi } from '@/api/projects.api';
 import ProjectInfoComponent from './ProjectInfoComponent.vue';
@@ -72,5 +72,9 @@ const conversationCreated = (conversation) => {
 onMounted(async () => {
   await loadProject();
   socketIOService.socket.on('conversation-created', conversationCreated);
+});
+
+onUnmounted(() => {
+  socketIOService.socket.off('conversation-created', conversationCreated);
 });
 </script>

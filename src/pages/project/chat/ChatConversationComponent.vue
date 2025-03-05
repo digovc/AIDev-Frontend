@@ -47,8 +47,16 @@ const scrollToBottom = async (immediate = true) => {
   }
 };
 
-const messageCreated = (message) => {
-  if (message.conversationId === props.conversation.id) {
+const messageSaved = (message) => {
+  if (message.conversationId !== props.conversation.id) {
+    return;
+  }
+
+  if (!messages.value) {
+    messages.value = [];
+  }
+
+  if (!messages.value.find(m => m.id === message.id)) {
     messages.value.push(message);
     scrollToBottom();
   }
@@ -84,13 +92,15 @@ watch(() => props.conversation, async (newValue) => {
 }, { immediate: true });
 
 onMounted(async () => {
-  socketIOService.socket.on('message-created', messageCreated);
+  socketIOService.socket.on('message-created', messageSaved);
+  socketIOService.socket.on('message-updated', messageSaved);
   socketIOService.socket.on('block-created', blockCreated);
   socketIOService.socket.on('block-delta', blockDelta);
 });
 
 onUnmounted(() => {
-  socketIOService.socket.off('message-created', messageCreated);
+  socketIOService.socket.off('message-created', messageSaved);
+  socketIOService.socket.off('message-updated', messageSaved);
   socketIOService.socket.off('block-created', blockCreated);
   socketIOService.socket.off('block-delta', blockDelta);
 });

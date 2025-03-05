@@ -94,6 +94,29 @@ const loadTasks = async () => {
   tasks.value = result.data;
 };
 
+const taskCreated = (task) => {
+  if (task.projectId !== props.project.id) {
+    return;
+  }
+
+  if (!tasks.value) {
+    tasks.value = [];
+  }
+
+  if (!tasks.value.find(t => t.id === task.id)) {
+    tasks.value.push(task);
+  }
+};
+
+const taskUpdated = (task) => {
+  const index = tasks.value.findIndex(t => t.id === task.id);
+  if (index !== -1) {
+    for (const key in task) {
+      tasks.value[index][key] = task[key];
+    }
+  }
+};
+
 const taskExecuting = (taskId) => {
   const task = tasks.value.find(t => t.id === taskId);
   if (task) {
@@ -110,11 +133,15 @@ const taskNotExecuting = (taskId) => {
 
 onMounted(async () => {
   await loadTasks()
+  socketIOService.socket.on('task-created', taskCreated);
+  socketIOService.socket.on('task-updated', taskUpdated);
   socketIOService.socket.on('task-executing', taskExecuting);
   socketIOService.socket.on('task-not-executing', taskNotExecuting);
 });
 
 onUnmounted(() => {
+  socketIOService.socket.off('task-created', taskCreated);
+  socketIOService.socket.off('task-updated', taskUpdated);
   socketIOService.socket.off('task-executing', taskExecuting);
   socketIOService.socket.off('task-not-executing', taskNotExecuting);
 });
