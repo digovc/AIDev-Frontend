@@ -178,6 +178,7 @@ dialog::backdrop {
 dialog {
   border: none;
   width: 75vw;
+  height: 75vh;
   position: fixed;
   top: 50%;
   left: 50%;
