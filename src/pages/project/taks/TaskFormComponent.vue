@@ -22,18 +22,23 @@
         <button type="button" @click="goBack" class="btn btn-secondary">
           Cancelar
         </button>
+        <button type="button" @click="openReferencesDialog" class="btn btn-secondary">
+          Referências
+        </button>
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Salvando...' : 'Salvar' }}
         </button>
       </div>
     </form>
   </div>
+  <ReferencesDialog ref="referencesDialog" :task-references="task.references" @update:references="updateReferences"/>
 </template>
 
 <script setup>
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api.js';
+import ReferencesDialog from '@/components/ReferencesDialog.vue';
 
 const props = defineProps({
   project: {
@@ -46,12 +51,14 @@ const router = useRouter();
 const route = useRoute();
 const loading = ref(false);
 const isEditing = ref(false);
+const referencesDialog = ref(null);
 
 const task = reactive({
   id: null,
   title: '',
   description: '',
-  status: 'backlog'
+  status: 'backlog',
+  references: []
 });
 
 const goBack = () => {
@@ -104,6 +111,7 @@ async function loadTask() {
     task.title = taskData.title;
     task.description = taskData.description;
     task.status = taskData.status;
+    task.references = taskData.references || [];
   } catch (error) {
     console.error('Erro ao carregar tarefa:', error);
     alert('Não foi possível carregar os dados da tarefa.');
@@ -112,6 +120,14 @@ async function loadTask() {
     loading.value = false;
   }
 }
+
+const openReferencesDialog = () => {
+  referencesDialog.value.open();
+};
+
+const updateReferences = (newReferences) => {
+  task.references = newReferences;
+};
 
 onMounted(async () => {
   await loadTask();
