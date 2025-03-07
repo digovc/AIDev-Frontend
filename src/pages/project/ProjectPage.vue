@@ -12,7 +12,7 @@
       <!-- Coluna da esquerda (2/3 do espaço) -->
       <div class="md:col-span-2 space-y-4 flex flex-col">
         <!-- Componente de informações do projeto -->
-        <ProjectInfoComponent :project="project"/>
+        <ProjectInfoComponent :project="project" @project-updated="handleProjectUpdated"/>
         <div class="relative grow overflow-y-auto">
           <!-- Router view para exibir tarefas ou formulário de tarefa -->
           <RouterView v-if="project" :project="project" class="h-full absolute inset-0"
@@ -46,6 +46,16 @@ const chatComponent = ref(null);
 const handleTaskSelected = (task) => {
   if (task && task.conversationId && chatComponent.value) {
     chatComponent.value.selectConversationById(task.conversationId);
+  }
+};
+
+const handleProjectUpdated = (updatedProject) => {
+  if (updatedProject) {
+    project.value = updatedProject;
+    // Atualizar o título da página com o nome atualizado do projeto
+    if (updatedProject.name) {
+      document.title = `${updatedProject.name} - AIDev`;
+    }
   }
 };
 

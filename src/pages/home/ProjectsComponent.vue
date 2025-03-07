@@ -17,7 +17,7 @@
 import { onMounted, ref } from 'vue';
 import { projectsApi } from '@/api/projects.api';
 import ProjectComponent from './ProjectComponent.vue';
-import ProjectFormComponent from './ProjectFormComponent.vue';
+import ProjectFormComponent from '@/components/ProjectFormComponent.vue';
 
 const projects = ref([]);
 const projectFormRef = ref(null);

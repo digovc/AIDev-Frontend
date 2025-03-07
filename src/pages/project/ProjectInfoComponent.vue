@@ -18,13 +18,18 @@
         </button>
       </div>
     </div>
+    <ProjectFormComponent ref="projectFormRef" @project-updated="onProjectUpdated"/>
   </div>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import ProjectFormComponent from '@/components/ProjectFormComponent.vue';
 
 const router = useRouter();
+const projectFormRef = ref(null);
+
 const props = defineProps({
   project: {
     type: Object,
@@ -32,11 +37,17 @@ const props = defineProps({
   }
 });
 
+const emit = defineEmits(['project-updated']);
+
 const backToHome = () => {
   router.push('/home');
 };
 
 const editProject = () => {
-  router.push(`/projects/${props.project.id}/edit`);
+  projectFormRef.value.open(props.project);
+};
+
+const onProjectUpdated = (updatedProject) => {
+  emit('project-updated', updatedProject);
 };
 </script>
