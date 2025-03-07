@@ -148,8 +148,7 @@ const handleKeyDown = (e) => {
   } else if ((e.key === 'Enter' || e.type === 'click') && selectedIndex.value >= 0) {
     e.preventDefault();
     addSelectedReference();
-    // Não fecha a lista, mantém o foco no input
-    searchQuery.value = '';
+    // Não limpa a pesquisa, permitindo adicionar mais referências
   }
 };
 
@@ -160,8 +159,15 @@ const addSelectedReference = () => {
       name: selected.name,
       path: selected.path
     });
-    searchQuery.value = '';
-    searchResults.value = [];
+    
+    // Removemos apenas a referência selecionada da lista de resultados
+    searchResults.value = searchResults.value.filter(result => result.path !== selected.path);
+    
+    // Atualizamos a seleção para o primeiro item se ainda houver resultados
+    selectedIndex.value = searchResults.value.length > 0 ? 0 : -1;
+    
+    // Não limpamos o query para permitir adicionar mais referências
+    // da mesma pesquisa, mas emitimos a atualização
     emit('update:references', references.value);
   }
 };
