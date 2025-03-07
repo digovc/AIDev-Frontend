@@ -11,7 +11,7 @@
       <!-- Grupos de tarefas -->
       <TasksGroupComponent title="Backlog" :tasks="getTasksByStatus('backlog')" emptyMessage="no backlog" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit" @done="handleDone" @archive="handleArchive"/>
       <TasksGroupComponent title="Em Andamento" :tasks="getTasksByStatus('running')" emptyMessage="em andamento" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit" @done="handleDone" @archive="handleArchive"/>
-      <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit" @archive="handleArchive"/>
+      <TasksGroupComponent title="Concluído" :tasks="getTasksByStatus('done')" emptyMessage="concluída" @play="handlePlay" @play-now="handlePlayNow" @stop="handleStop" @edit="handleEdit" @done="handleDone" @archive="handleArchive" @archive-all="handleArchiveAll"/>
     </div>
 
   </div>
@@ -50,6 +50,24 @@ const handleArchive = async (taskId) => {
     tasks.value = tasks.value.filter(t => t.id !== taskId);
   } catch (error) {
     alert('Erro ao arquivar tarefa: ' + error.message);
+  }
+};
+
+const handleArchiveAll = async () => {
+  try {
+    // Filtrar apenas tarefas concluídas e extrair seus IDs
+    const doneTasks = getTasksByStatus('done');
+    if (doneTasks.length === 0) return;
+    
+    const doneTaskIds = doneTasks.map(task => task.id);
+    
+    // Chamar a API para arquivar todas as tarefas concluídas
+    await tasksApi.archiveTasks(props.project.id, doneTaskIds);
+    
+    // Remover as tarefas arquivadas da lista
+    tasks.value = tasks.value.filter(t => t.status !== 'done');
+  } catch (error) {
+    alert('Erro ao arquivar tarefas concluídas: ' + error.message);
   }
 };
 

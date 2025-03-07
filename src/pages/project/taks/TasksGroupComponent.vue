@@ -8,6 +8,16 @@
     </div>
 
     <div v-if="expanded" class="mt-3">
+      <!-- Área de ações do grupo -->
+      <div v-if="tasks.length > 0 && showGroupActions" class="mb-3 flex justify-end">
+        <button 
+          v-if="title === 'Concluído'" 
+          @click="$emit('archive-all')" 
+          class="bg-gray-600 hover:bg-gray-500 text-white text-sm font-medium py-1 px-3 rounded flex items-center">
+          <FontAwesomeIcon :icon="faArchive" class="mr-1" /> Arquivar todas
+        </button>
+      </div>
+      
       <div v-if="tasks.length === 0" class="text-gray-400 italic">
         Nenhuma tarefa {{ emptyMessage }}
       </div>
@@ -19,6 +29,8 @@
 <script setup>
 import { ref } from 'vue';
 import TaskComponent from './TaskComponent.vue';
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faArchive } from "@fortawesome/free-solid-svg-icons";
 
 const expanded = ref(true);
 
@@ -38,8 +50,12 @@ defineProps({
   emptyMessage: {
     type: String,
     default: ''
+  },
+  showGroupActions: {
+    type: Boolean,
+    default: true
   }
 });
 
-defineEmits(['play', 'play-now', 'stop', 'edit', 'archive', 'done']);
+defineEmits(['play', 'play-now', 'stop', 'edit', 'archive', 'done', 'archive-all']);
 </script>
