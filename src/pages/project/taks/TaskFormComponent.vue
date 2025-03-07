@@ -43,6 +43,9 @@
         <button v-if="isEditing" type="button" @click="duplicateTask" class="btn btn-secondary" :disabled="loading">
           Duplicar
         </button>
+        <button type="button" @click="saveAndRunTask" class="btn btn-success" :disabled="loading">
+          {{ loading ? 'Processando...' : 'Salvar e Executar' }}
+        </button>
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Salvando...' : 'Salvar' }}
         </button>
@@ -53,7 +56,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref, watch, onBeforeUnmount } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api.js';
 import ReferencesDialog from '@/pages/project/taks/ReferencesDialog.vue';
@@ -97,6 +100,7 @@ const saveTask = async () => {
       await tasksApi.updateTask(task.id, taskData);
     } else {
       const result = await tasksApi.createTask(taskData);
+      task.id = result.data.id; // Atualiza o ID da tarefa após a criação
     }
 
     // Navegar de volta para a lista de tarefas
@@ -104,6 +108,38 @@ const saveTask = async () => {
   } catch (error) {
     console.error(`Erro ao ${ isEditing.value ? 'atualizar' : 'salvar' } tarefa:`, error);
     alert(`Ocorreu um erro ao ${ isEditing.value ? 'atualizar' : 'salvar' } a tarefa. Por favor, tente novamente.`);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const saveAndRunTask = async () => {
+  try {
+    loading.value = true;
+
+    const taskData = {
+      ...task,
+      projectId: props.project.id
+    };
+
+    let taskId;
+
+    if (isEditing.value) {
+      await tasksApi.updateTask(task.id, taskData);
+      taskId = task.id;
+    } else {
+      const result = await tasksApi.createTask(taskData);
+      taskId = result.data.id;
+    }
+
+    // Executar a tarefa após salvar
+    await tasksApi.runTask(taskId);
+
+    // Navegar de volta para a lista de tarefas
+    await router.push(`/projects/${ props.project.id }`);
+  } catch (error) {
+    console.error(`Erro ao salvar e executar tarefa:`, error);
+    alert(`Ocorreu um erro ao salvar e executar a tarefa. Por favor, tente novamente.`);
   } finally {
     loading.value = false;
   }
