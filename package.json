@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "vite build && serve -p 3030 dist",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
@@ -28,6 +29,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
+    "serve": "^14.2.4",
     "vite": "^6.1.0",
     "vite-plugin-vue-devtools": "^7.7.2"
   }
