@@ -109,7 +109,7 @@ const saveTask = async () => {
   }
 };
 
-async function loadTask() {
+const loadTask = async () => {
   const taskId = route.params.taskId;
 
   if (!taskId) {
@@ -134,7 +134,7 @@ async function loadTask() {
   } finally {
     loading.value = false;
   }
-}
+};
 
 const duplicateTask = async () => {
   try {
@@ -153,8 +153,8 @@ const duplicateTask = async () => {
     const result = await tasksApi.createTask(duplicatedTaskData);
 
     // Navegar para a página de edição da nova tarefa
-    await router.push(`/projects/${props.project.id}/tasks/${result.data.id}`);
-    
+    await router.push(`/projects/${ props.project.id }/tasks/${ result.data.id }`);
+
   } catch (error) {
     console.error('Erro ao duplicar tarefa:', error);
     alert('Ocorreu um erro ao duplicar a tarefa. Por favor, tente novamente.');
@@ -177,12 +177,12 @@ const removeReference = (index) => {
 
 // Observar mudanças na rota para recarregar a tarefa quando o parâmetro taskId mudar
 watch(
-  () => route.params.taskId,
-  async (newTaskId) => {
-    if (newTaskId) {
-      await loadTask();
+    () => route.params.taskId,
+    async (newTaskId) => {
+      if (newTaskId) {
+        await loadTask();
+      }
     }
-  }
 );
 
 onMounted(async () => {
