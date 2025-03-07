@@ -53,7 +53,7 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api.js';
 import ReferencesDialog from '@/pages/project/taks/ReferencesDialog.vue';
@@ -153,8 +153,8 @@ const duplicateTask = async () => {
     const result = await tasksApi.createTask(duplicatedTaskData);
 
     // Navegar para a página de edição da nova tarefa
-    await router.push(`/projects/${ props.project.id }/tasks/${ result.data.id }`);
-
+    await router.push(`/projects/${props.project.id}/tasks/${result.data.id}`);
+    
   } catch (error) {
     console.error('Erro ao duplicar tarefa:', error);
     alert('Ocorreu um erro ao duplicar a tarefa. Por favor, tente novamente.');
@@ -174,6 +174,16 @@ const updateReferences = (newReferences) => {
 const removeReference = (index) => {
   task.references.splice(index, 1);
 };
+
+// Observar mudanças na rota para recarregar a tarefa quando o parâmetro taskId mudar
+watch(
+  () => route.params.taskId,
+  async (newTaskId) => {
+    if (newTaskId) {
+      await loadTask();
+    }
+  }
+);
 
 onMounted(async () => {
   await loadTask();
