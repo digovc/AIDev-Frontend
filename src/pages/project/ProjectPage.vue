@@ -58,6 +58,12 @@ async function loadProject() {
     loading.value = true;
     const response = await projectsApi.getProjectById(route.params.id);
     project.value = response.data;
+
+    // Atualizar o título da página com o nome do projeto
+    if (project.value && project.value.name) {
+      document.title = `${project.value.name} - AIDev`;
+    }
+
   } catch (e) {
     console.error('Erro ao carregar dados do projeto:', e);
     error.value = 'Não foi possível carregar o projeto. Tente novamente mais tarde.';
@@ -74,10 +80,19 @@ const conversationCreated = (conversation) => {
 
 onMounted(async () => {
   await loadProject();
+
+  // Atualizar o título da página com o nome do projeto
+  if (project.value && project.value.name) {
+    document.title = `${project.value.name} - AIDev`;
+  }
+
   socketIOService.socket.on('conversation-created', conversationCreated);
 });
 
 onUnmounted(() => {
   socketIOService.socket.off('conversation-created', conversationCreated);
+
+  // Resetar o título da página quando sair da página do projeto
+  document.title = 'AIDev';
 });
 </script>

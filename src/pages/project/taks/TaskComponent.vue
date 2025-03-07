@@ -13,7 +13,7 @@
       <button v-if="task.status === 'running'" @click="$emit('stop', task.id)" class="text-red-400 hover:text-red-300" title="Parar">
         <FontAwesomeIcon :icon="faStop"/>
       </button>
-      <button v-if="task.status !== 'done'" @click.stop="$emit('done', task.id)" class="text-green-500 hover:text-green-400" title="Concluir">
+      <button v-if="task.status !== 'done'" @click.stop="$emit('done', task.id)" class="text-gray-400 hover:text-gray-300" title="Concluir">
         <FontAwesomeIcon :icon="faCheck"/>
       </button>
       <button @click.stop="$emit('archive', task.id)" class="text-gray-400 hover:text-gray-300" title="Arquivar">

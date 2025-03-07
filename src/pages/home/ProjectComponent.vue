@@ -19,7 +19,18 @@ const props = defineProps({
   }
 });
 
-const navigateToProject = () => {
-  router.push(`/project/${ props.project.id }`);
+const navigateToProject = (event) => {
+  // Se a tecla Command (Mac) ou Control (Windows/Linux) estiver pressionada, abre em uma nova aba
+  if (event.metaKey || event.ctrlKey) {
+    // Criar a URL completa para o projeto
+    const baseUrl = window.location.origin + window.location.pathname;
+    const projectUrl = `${baseUrl}#/project/${props.project.id}`;
+
+    // Abrir em uma nova aba
+    window.open(projectUrl, '_blank');
+  } else {
+    // Comportamento normal - navegar na mesma aba
+    router.push(`/project/${props.project.id}`);
+  }
 };
 </script>
