@@ -40,6 +40,9 @@
         <button type="button" @click="goBack" class="btn btn-secondary">
           Cancelar
         </button>
+        <button v-if="isEditing" type="button" @click="duplicateTask" class="btn btn-secondary" :disabled="loading">
+          Duplicar
+        </button>
         <button type="submit" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Salvando...' : 'Salvar' }}
         </button>
@@ -78,7 +81,7 @@ const task = reactive({
 });
 
 const goBack = () => {
-  router.push(`/project/${ props.project.id }`);
+  router.push(`/projects/${ props.project.id }`);
 };
 
 const saveTask = async () => {
@@ -92,16 +95,12 @@ const saveTask = async () => {
 
     if (isEditing.value) {
       await tasksApi.updateTask(task.id, taskData);
-      const oldTask = props.project.tasks.find(t => t.id === task.id);
-      oldTask.title = task.title;
-      oldTask.status = task.status;
     } else {
       const result = await tasksApi.createTask(taskData);
-      props.project.tasks.push({ id: result.data.id, title: task.title, status: task.status });
     }
 
     // Navegar de volta para a lista de tarefas
-    await router.push(`/project/${ props.project.id }`);
+    await router.push(`/projects/${ props.project.id }`);
   } catch (error) {
     console.error(`Erro ao ${ isEditing.value ? 'atualizar' : 'salvar' } tarefa:`, error);
     alert(`Ocorreu um erro ao ${ isEditing.value ? 'atualizar' : 'salvar' } a tarefa. Por favor, tente novamente.`);
@@ -131,11 +130,38 @@ async function loadTask() {
   } catch (error) {
     console.error('Erro ao carregar tarefa:', error);
     alert('Não foi possível carregar os dados da tarefa.');
-    await router.push(`/project/${ props.project.id }`);
+    await router.push(`/projects/${ props.project.id }`);
   } finally {
     loading.value = false;
   }
 }
+
+const duplicateTask = async () => {
+  try {
+    loading.value = true;
+
+    // Criar uma cópia da tarefa atual, removendo o ID para criar uma nova
+    const duplicatedTaskData = {
+      title: `${ task.title } (Cópia)`,
+      description: task.description,
+      status: 'backlog', // Define status como backlog para a nova tarefa
+      references: [...task.references], // Copia as referências
+      projectId: props.project.id
+    };
+
+    // Criar nova tarefa
+    const result = await tasksApi.createTask(duplicatedTaskData);
+
+    // Navegar para a página de edição da nova tarefa
+    await router.push(`/projects/${ props.project.id }/tasks/${ result.data.id }`);
+
+  } catch (error) {
+    console.error('Erro ao duplicar tarefa:', error);
+    alert('Ocorreu um erro ao duplicar a tarefa. Por favor, tente novamente.');
+  } finally {
+    loading.value = false;
+  }
+};
 
 const openReferencesDialog = () => {
   referencesDialog.value.open();
@@ -153,4 +179,3 @@ onMounted(async () => {
   await loadTask();
 });
 </script>
-

@@ -24,13 +24,13 @@ const navigateToProject = (event) => {
   if (event.metaKey || event.ctrlKey) {
     // Criar a URL completa para o projeto
     const baseUrl = window.location.origin + window.location.pathname;
-    const projectUrl = `${baseUrl}#/project/${props.project.id}`;
+    const projectUrl = `${baseUrl}#/projects/${props.project.id}`;
 
     // Abrir em uma nova aba
     window.open(projectUrl, '_blank');
   } else {
     // Comportamento normal - navegar na mesma aba
-    router.push(`/project/${props.project.id}`);
+    router.push(`/projects/${props.project.id}`);
   }
 };
 </script>

@@ -36,7 +36,7 @@ const router = useRouter();
 const emit = defineEmits(['taskSelected']);
 const tasks = ref([]);
 const showTaskForm = () => {
-  router.push(`/project/${ props.project.id }/tasks/new`);
+  router.push(`/projects/${ props.project.id }/tasks/new`);
 };
 
 const getTasksByStatus = (status) => {
@@ -58,12 +58,12 @@ const handleArchiveAll = async () => {
     // Filtrar apenas tarefas concluídas e extrair seus IDs
     const doneTasks = getTasksByStatus('done');
     if (doneTasks.length === 0) return;
-    
+
     const doneTaskIds = doneTasks.map(task => task.id);
-    
+
     // Chamar a API para arquivar todas as tarefas concluídas
     await tasksApi.archiveTasks(props.project.id, doneTaskIds);
-    
+
     // Remover as tarefas arquivadas da lista
     tasks.value = tasks.value.filter(t => t.status !== 'done');
   } catch (error) {
@@ -123,7 +123,7 @@ const handleDone = async (taskId) => {
 };
 
 const handleEdit = (task) => {
-  router.push(`/project/${ props.project.id }/tasks/${ task.id }`);
+  router.push(`/projects/${ props.project.id }/tasks/${ task.id }`);
   emit('taskSelected', task);
 };
 

@@ -37,6 +37,6 @@ const backToHome = () => {
 };
 
 const editProject = () => {
-  router.push(`/project/${props.project.id}/edit`);
+  router.push(`/projects/${props.project.id}/edit`);
 };
 </script>
