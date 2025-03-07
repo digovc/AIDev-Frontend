@@ -7,19 +7,19 @@
       <h4 class="font-bold">{{ task.title }}</h4>
     </div>
     <div class="flex space-x-4 items-center">
-      <button v-if="task.status !== 'running'" @click="$emit('play', task.id)" class="text-green-400 hover:text-green-300" title="Iniciar">
-        <FontAwesomeIcon :icon="faPlay"/>
+      <button v-if="task.status !== 'running'" @click="$emit('play', task.id)" class="text-gray-400 hover:text-gray-200" title="Iniciar">
+        <FontAwesomeIcon :icon="faPlay" class="h-6 w-6"/>
       </button>
-      <button v-if="task.status === 'running'" @click="$emit('stop', task.id)" class="text-red-400 hover:text-red-300" title="Parar">
-        <FontAwesomeIcon :icon="faStop"/>
+      <button v-if="task.status === 'running'" @click="$emit('stop', task.id)" class="text-gray-400 hover:text-gray-200" title="Parar">
+        <FontAwesomeIcon :icon="faStop" class="h-6 w-6"/>
       </button>
-      <button v-if="task.status !== 'done'" @click.stop="$emit('done', task.id)" class="text-gray-400 hover:text-gray-300" title="Concluir">
-        <FontAwesomeIcon :icon="faCheck"/>
+      <button v-if="task.status !== 'done'" @click.stop="$emit('done', task.id)" class="text-gray-400 hover:text-gray-200" title="Concluir">
+        <FontAwesomeIcon :icon="faCheck" class="h-6 w-6"/>
       </button>
-      <button @click.stop="$emit('archive', task.id)" class="text-gray-400 hover:text-gray-300" title="Arquivar">
-        <FontAwesomeIcon :icon="faArchive"/>
+      <button @click.stop="$emit('archive', task.id)" class="text-gray-400 hover:text-gray-200" title="Arquivar">
+        <FontAwesomeIcon :icon="faArchive" class="h-6 w-6"/>
       </button>
-      <FontAwesomeIcon :icon="faCog" class="text-orange-400 animate-spin" v-if="task.isExecuting"/>
+      <FontAwesomeIcon :icon="faCog" class="text-orange-400 h-6 w-6 animate-spin" v-if="task.isExecuting"/>
     </div>
   </div>
 </template>

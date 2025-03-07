@@ -7,14 +7,12 @@
           Path: {{ project?.path }}
         </div>
       </div>
-      <div class="flex items-center space-x-2">
+      <div class="flex items-center space-x-4">
         <button @click="editProject" class="text-gray-400 hover:text-gray-200">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-          </svg>
+          <FontAwesomeIcon :icon="faEdit"/>
         </button>
         <button @click="backToHome" class="text-gray-400 hover:text-gray-200">
-          <span class="text-2xl">&times;</span>
+          <FontAwesomeIcon :icon="faTimes"/>
         </button>
       </div>
     </div>
@@ -26,6 +24,8 @@
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 import ProjectFormComponent from '@/components/ProjectFormComponent.vue';
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faEdit, faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const router = useRouter();
 const projectFormRef = ref(null);

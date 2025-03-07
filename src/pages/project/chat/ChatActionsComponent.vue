@@ -2,7 +2,7 @@
   <div class="flex items-center w-full gap-2">
     <!-- Select para escolher a conversa -->
     <label for="conversation" class="text-white">Conversas:</label>
-    <select v-model="selectedConversationId" @change="onConversationChange" class="bg-gray-700 text-white rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <select v-model="selectedConversationId" @change="onConversationChange" class="bg-gray-700 text-white rounded p-1 focus:outline-none focus:ring-2 focus:ring-blue-500">
       <option v-for="conversation in conversations" :key="conversation.id" :value="conversation.id">
         {{ conversation.title || `Conversa ${ conversation.id.substring(0, 6) }...` }}
       </option>
@@ -11,12 +11,9 @@
     <!-- Botões de ação do chat -->
     <div class="flex space-x-2">
       <!-- Adicione este botão após o select -->
-      <button @click="createNewConversation" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 flex items-center justify-center" title="Nova conversa">
-        <span class="text-lg font-bold">+</span>
+      <button @click="createNewConversation" class="text-gray-400 hover:text-gray-200" title="Nova conversa">
+        <span class="text-2xl">+</span>
       </button>
-      <!--      <button class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">-->
-      <!--        Anexar-->
-      <!--      </button>-->
     </div>
   </div>
 </template>

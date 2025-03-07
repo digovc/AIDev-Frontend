@@ -4,7 +4,7 @@
       <h3 class="text-xl font-semibold text-white flex items-center">
         {{ title }} <span class="ml-2 text-gray-400 text-sm">({{ tasks.length }})</span>
       </h3>
-      <i :class="expanded ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-gray-400"></i>
+      <i :class="expanded ? 'fas fa-chevron-up' : 'fas fa-chevron-down'" class="text-gray-400 hover:text-gray-200"></i>
     </div>
 
     <div v-if="expanded" class="mt-3">
@@ -13,8 +13,8 @@
         <button 
           v-if="title === 'Concluído'" 
           @click="$emit('archive-all')" 
-          class="bg-gray-600 hover:bg-gray-500 text-white text-sm font-medium py-1 px-3 rounded flex items-center">
-          <FontAwesomeIcon :icon="faArchive" class="mr-1" /> Arquivar todas
+          class="text-gray-400 hover:text-gray-200 flex items-center">
+          <FontAwesomeIcon :icon="faArchive" class="h-6 w-6 mr-1" /> Arquivar todas
         </button>
       </div>
       

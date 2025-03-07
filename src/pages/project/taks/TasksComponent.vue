@@ -2,8 +2,8 @@
   <div class="bg-gray-900 rounded-lg shadow-md p-4 flex flex-col">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold">Tarefas</h2>
-      <button @click="showTaskForm" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-        Nova Tarefa
+      <button @click="showTaskForm" class="text-gray-400 hover:text-gray-200">
+        <span class="text-2xl">+</span>
       </button>
     </div>
 
