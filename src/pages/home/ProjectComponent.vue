@@ -1,6 +1,5 @@
 <template>
-  <div
-      class="bg-gray-900 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:scale-105" @click="navigateToProject">
+  <div class="bg-gray-900 rounded-lg shadow-md p-4 hover:shadow-lg transition-shadow duration-300 cursor-pointer hover:scale-105" @click="navigateToProject">
     <h2 class="text-xl font-semibold mb-2">{{ project.name }}</h2>
     <div class="text-sm text-gray-300 text-xs">
       <span>Path:</span> {{ project.path }}
@@ -24,13 +23,13 @@ const navigateToProject = (event) => {
   if (event.metaKey || event.ctrlKey) {
     // Criar a URL completa para o projeto
     const baseUrl = window.location.origin + window.location.pathname;
-    const projectUrl = `${baseUrl}#/projects/${props.project.id}`;
+    const projectUrl = `${ baseUrl }#/projects/${ props.project.id }`;
 
     // Abrir em uma nova aba
     window.open(projectUrl, '_blank');
   } else {
     // Comportamento normal - navegar na mesma aba
-    router.push(`/projects/${props.project.id}`);
+    router.push(`/projects/${ props.project.id }`);
   }
 };
 </script>
