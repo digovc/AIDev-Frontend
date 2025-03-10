@@ -36,8 +36,18 @@
         </div>
       </div>
 
+      <div class="mb-4">
+        <label for="assistant" class="form-label">Assistente</label>
+        <select id="assistant" v-model="task.assistant" class="form-input">
+          <option :value="null">Selecione um assistente</option>
+          <option v-for="assistant in assistants" :key="assistant.id" :value="assistant">
+            {{ assistant.name }}
+          </option>
+        </select>
+      </div>
+
       <div class="flex justify-end space-x-3">
-        <button type="button" @click="saveAndRunTask" class="btn btn-success" :disabled="loading">
+        <button type="button" @click="saveAndRunTask" class="btn btn-primary" :disabled="loading">
           {{ loading ? 'Processando...' : 'Executar' }}
         </button>
         <button type="submit" class="btn btn-primary" :disabled="loading">
@@ -61,6 +71,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api.js';
 import ReferencesDialog from '@/pages/project/taks/ReferencesDialog.vue';
 import ReferenceComponent from '@/components/ReferenceComponent.vue';
+import { assistantsApi } from '@/api/assistants.api.js';
 
 const props = defineProps({
   project: {
@@ -80,8 +91,11 @@ const task = reactive({
   title: '',
   description: '',
   status: 'backlog',
-  references: []
+  references: [],
+  assistant: null
 });
+
+const assistants = ref([]);
 
 const goBack = () => {
   router.push(`/projects/${ props.project.id }`);
@@ -95,6 +109,11 @@ const saveTask = async () => {
       ...task,
       projectId: props.project.id
     };
+
+    // Salva o assistente selecionado como default no localStorage
+    if (task.assistant) {
+      localStorage.setItem('defaultAssistant', JSON.stringify(task.assistant));
+    }
 
     if (isEditing.value) {
       await tasksApi.updateTask(task.id, taskData);
@@ -116,6 +135,11 @@ const saveTask = async () => {
 const saveAndRunTask = async () => {
   try {
     loading.value = true;
+
+    // Salva o assistente selecionado como default no localStorage
+    if (task.assistant) {
+      localStorage.setItem('defaultAssistant', JSON.stringify(task.assistant));
+    }
 
     const taskData = {
       ...task,
@@ -163,6 +187,7 @@ const loadTask = async () => {
     task.description = taskData.description;
     task.status = taskData.status;
     task.references = taskData.references || [];
+    task.assistant = taskData.assistant || null;
   } catch (error) {
     console.error('Erro ao carregar tarefa:', error);
     alert('Não foi possível carregar os dados da tarefa.');
@@ -221,7 +246,23 @@ watch(
     }
 );
 
+const loadAssistants = async () => {
+  try {
+    const response = await assistantsApi.listAssistants();
+    assistants.value = response.data;
+
+    // Verifica se há um assistente default no localStorage
+    const defaultAssistant = localStorage.getItem('defaultAssistant');
+    if (defaultAssistant) {
+      task.assistant = JSON.parse(defaultAssistant);
+    }
+  } catch (error) {
+    console.error('Erro ao carregar assistentes:', error);
+  }
+};
+
 onMounted(async () => {
   await loadTask();
+  await loadAssistants();
 });
 </script>
