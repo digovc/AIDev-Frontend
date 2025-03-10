@@ -2,7 +2,7 @@
   <div class="bg-gray-900 rounded-lg shadow-md p-4 flex flex-col">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold">{{ isEditing ? `Editar Tarefa (${ task.id })` : 'Nova Tarefa' }}</h2>
-      <button @click="goBack" class="text-gray-500 hover:text-gray-700">
+      <button @click="goBack" class="text-gray-400 hover:text-gray-200">
         <FontAwesomeIcon :icon="faTimes" class="text-2xl"/>
       </button>
     </div>
@@ -77,7 +77,7 @@ import ReferencesDialog from '@/pages/project/taks/ReferencesDialog.vue';
 import ReferenceComponent from '@/components/ReferenceComponent.vue';
 import { assistantsApi } from '@/api/assistants.api.js';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCopy, faPlay, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCopy, faPlay, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const props = defineProps({
   project: {

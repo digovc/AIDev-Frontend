@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-2xl font-bold">Tarefas</h2>
       <button @click="showTaskForm" class="text-gray-400 hover:text-gray-200">
-        <span class="text-2xl">+</span>
+        <FontAwesomeIcon :icon="faPlus" class="text-2xl"/>
       </button>
     </div>
 
@@ -23,6 +23,8 @@ import { useRouter } from 'vue-router';
 import TasksGroupComponent from './TasksGroupComponent.vue';
 import { tasksApi } from '@/api/tasks.api.js';
 import { socketIOService } from "@/services/socket.io.js";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 
 const props = defineProps({
   project: {

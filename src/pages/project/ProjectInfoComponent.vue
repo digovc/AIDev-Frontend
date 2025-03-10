@@ -12,7 +12,7 @@
           <FontAwesomeIcon :icon="faEdit"/>
         </button>
         <button @click="backToHome" class="text-gray-400 hover:text-gray-200">
-          <FontAwesomeIcon :icon="faTimes"/>
+          <FontAwesomeIcon :icon="faTimes" class="text-2xl"/>
         </button>
       </div>
     </div>
