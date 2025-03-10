@@ -6,7 +6,6 @@
 </template>
 
 <script setup>
-import { defineEmits, defineProps } from 'vue'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 defineProps({
