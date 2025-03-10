@@ -118,7 +118,8 @@ const loadConversations = async () => {
   conversations.value = response.data;
 
   if (conversations.value.length > 0) {
-    selectedConversation.value = conversations.value[0];
+    const lastConversationIndex = conversations.value.length - 1;
+    selectedConversation.value = conversations.value[lastConversationIndex];
   }
 };
 

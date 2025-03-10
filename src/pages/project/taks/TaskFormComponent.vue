@@ -3,7 +3,7 @@
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold">{{ isEditing ? `Editar Tarefa (${ task.id })` : 'Nova Tarefa' }}</h2>
       <button @click="goBack" class="text-gray-500 hover:text-gray-700">
-        <span class="text-2xl">&times;</span>
+        <FontAwesomeIcon :icon="faTimes" class="text-2xl"/>
       </button>
     </div>
 
@@ -23,6 +23,7 @@
         <div class="flex justify-between items-center mb-2">
           <label class="form-label">Referências</label>
           <button type="button" @click="openReferencesDialog" class="btn btn-secondary btn-sm">
+            <FontAwesomeIcon :icon="faPlus" class="mr-2"/>
             Adicionar Referência
           </button>
         </div>
@@ -48,12 +49,15 @@
 
       <div class="flex justify-end space-x-3">
         <button type="button" @click="saveAndRunTask" class="btn btn-primary" :disabled="loading">
+          <FontAwesomeIcon :icon="faPlay" class="mr-2"/>
           {{ loading ? 'Processando...' : 'Executar' }}
         </button>
         <button type="submit" class="btn btn-primary" :disabled="loading">
+          <FontAwesomeIcon :icon="faSave" class="mr-2"/>
           {{ loading ? 'Salvando...' : 'Salvar' }}
         </button>
         <button v-if="isEditing" type="button" @click="duplicateTask" class="btn btn-secondary" :disabled="loading">
+          <FontAwesomeIcon :icon="faCopy" class="mr-2"/>
           Duplicar
         </button>
         <button type="button" @click="goBack" class="btn btn-secondary">
@@ -66,12 +70,14 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch, onBeforeUnmount } from 'vue';
+import { onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api.js';
 import ReferencesDialog from '@/pages/project/taks/ReferencesDialog.vue';
 import ReferenceComponent from '@/components/ReferenceComponent.vue';
 import { assistantsApi } from '@/api/assistants.api.js';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { faCopy, faPlay, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
 
 const props = defineProps({
   project: {
@@ -92,7 +98,7 @@ const task = reactive({
   description: '',
   status: 'backlog',
   references: [],
-  assistant: null
+  assistantId: null
 });
 
 const assistants = ref([]);
@@ -111,8 +117,8 @@ const saveTask = async () => {
     };
 
     // Salva o assistente selecionado como default no localStorage
-    if (task.assistant) {
-      localStorage.setItem('defaultAssistant', JSON.stringify(task.assistant));
+    if (task.assistantId) {
+      localStorage.setItem('defaultAssistantId', task.assistantId);
     }
 
     if (isEditing.value) {
@@ -137,8 +143,8 @@ const saveAndRunTask = async () => {
     loading.value = true;
 
     // Salva o assistente selecionado como default no localStorage
-    if (task.assistant) {
-      localStorage.setItem('defaultAssistant', JSON.stringify(task.assistant));
+    if (task.assistantId) {
+      localStorage.setItem('defaultAssistantId', task.assistantId);
     }
 
     const taskData = {
@@ -187,7 +193,7 @@ const loadTask = async () => {
     task.description = taskData.description;
     task.status = taskData.status;
     task.references = taskData.references || [];
-    task.assistant = taskData.assistant || null;
+    task.assistantId = taskData.assistantId;
   } catch (error) {
     console.error('Erro ao carregar tarefa:', error);
     alert('Não foi possível carregar os dados da tarefa.');
@@ -252,9 +258,12 @@ const loadAssistants = async () => {
     assistants.value = response.data;
 
     // Verifica se há um assistente default no localStorage
-    const defaultAssistant = localStorage.getItem('defaultAssistant');
-    if (defaultAssistant) {
-      task.assistant = JSON.parse(defaultAssistant);
+    const defaultAssistantId = localStorage.getItem('defaultAssistantId');
+    if (defaultAssistantId) {
+      const assistant = assistants.value.find(assistant => assistant.id === defaultAssistantId);
+      if (assistant) {
+        task.assistantId = assistant.id;
+      }
     }
   } catch (error) {
     console.error('Erro ao carregar assistentes:', error);
