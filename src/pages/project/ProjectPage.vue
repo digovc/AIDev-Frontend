@@ -8,22 +8,24 @@
       {{ error }}
     </div>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-3 gap-4 h-full">
-      <!-- Coluna da esquerda (2/3 do espaço) -->
-      <div class="md:col-span-2 space-y-4 flex flex-col">
+    <div v-else class="flex h-full">
+      <!-- Coluna da esquerda (tarefas) -->
+      <div class="space-y-4 flex flex-col" :style="{ width: `${leftWidth}%` }">
         <!-- Componente de informações do projeto -->
         <ProjectInfoComponent :project="project" @project-updated="handleProjectUpdated"/>
         <div class="relative grow overflow-y-auto">
           <!-- Router view para exibir tarefas ou formulário de tarefa -->
-          <RouterView v-if="project" :project="project" class="h-full absolute inset-0"
-                      @taskSelected="handleTaskSelected"></RouterView>
+          <RouterView v-if="project" :project="project" class="h-full absolute inset-0" @taskSelected="handleTaskSelected"></RouterView>
         </div>
       </div>
 
-      <!-- Coluna da direita (1/3 do espaço) -->
-      <div class="md:col-span-1">
+      <!-- Divisor redimensionável -->
+      <div class="cursor-col-resize w-2 h-full hover:bg-blue-300 active:bg-blue-500 transition-colors duration-200" @mousedown="startResize"></div>
+
+      <!-- Coluna da direita (chat) -->
+      <div class="flex-1">
         <!-- Componente de chat -->
-        <ChatComponent ref="chatComponent" :project="project"/>
+        <ChatComponent ref="chatComponent" :project="project" class="h-full"/>
       </div>
     </div>
   </div>
@@ -43,6 +45,60 @@ const loading = ref(true);
 const error = ref(null);
 const chatComponent = ref(null);
 
+// Estado para controlar o redimensionamento
+const leftWidth = ref(66); // Padrão: 66% para a esquerda (aprox. 2/3)
+const isResizing = ref(false);
+
+// Carregar a proporção salva do localStorage ou usar o valor padrão
+const loadSavedLayout = () => {
+  try {
+    const savedWidth = localStorage.getItem('aidev.layout.leftWidth');
+    if (savedWidth !== null) {
+      leftWidth.value = parseFloat(savedWidth);
+    }
+  } catch (e) {
+    console.error('Erro ao carregar layout salvo:', e);
+  }
+};
+
+// Salvar a proporção atual no localStorage
+const saveLayout = () => {
+  try {
+    localStorage.setItem('aidev.layout.leftWidth', leftWidth.value.toString());
+  } catch (e) {
+    console.error('Erro ao salvar layout:', e);
+  }
+};
+
+// Lidar com o início do redimensionamento
+const startResize = (e) => {
+  isResizing.value = true;
+  document.addEventListener('mousemove', onResize);
+  document.addEventListener('mouseup', stopResize);
+  // Evitar seleção de texto durante o redimensionamento
+  e.preventDefault();
+};
+
+// Calcular a nova largura durante o redimensionamento
+const onResize = (e) => {
+  if (!isResizing.value) return;
+
+  const container = e.currentTarget.parentElement;
+  const containerRect = container.getBoundingClientRect();
+  const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
+
+  // Limitar a largura entre 30% e 80%
+  leftWidth.value = Math.max(30, Math.min(80, newWidth));
+};
+
+// Parar o redimensionamento e salvar a configuração
+const stopResize = () => {
+  isResizing.value = false;
+  document.removeEventListener('mousemove', onResize);
+  document.removeEventListener('mouseup', stopResize);
+  saveLayout();
+};
+
 const handleTaskSelected = (task) => {
   if (task && task.conversationId && chatComponent.value) {
     chatComponent.value.selectConversationById(task.conversationId);
@@ -54,7 +110,7 @@ const handleProjectUpdated = (updatedProject) => {
     project.value = updatedProject;
     // Atualizar o título da página com o nome atualizado do projeto
     if (updatedProject.name) {
-      document.title = `${updatedProject.name} - AIDev`;
+      document.title = `${ updatedProject.name } - AIDev`;
     }
   }
 };
@@ -71,7 +127,7 @@ async function loadProject() {
 
     // Atualizar o título da página com o nome do projeto
     if (project.value && project.value.name) {
-      document.title = `${project.value.name} - AIDev`;
+      document.title = `${ project.value.name } - AIDev`;
     }
 
   } catch (e) {
@@ -89,11 +145,14 @@ const conversationCreated = (conversation) => {
 };
 
 onMounted(async () => {
+  // Carregar a proporção salva
+  loadSavedLayout();
+
   await loadProject();
 
   // Atualizar o título da página com o nome do projeto
   if (project.value && project.value.name) {
-    document.title = `${project.value.name} - AIDev`;
+    document.title = `${ project.value.name } - AIDev`;
   }
 
   socketIOService.socket.on('conversation-created', conversationCreated);
@@ -101,6 +160,10 @@ onMounted(async () => {
 
 onUnmounted(() => {
   socketIOService.socket.off('conversation-created', conversationCreated);
+
+  // Limpar os event listeners de redimensionamento se ainda estiverem ativos
+  document.removeEventListener('mousemove', onResize);
+  document.removeEventListener('mouseup', stopResize);
 
   // Resetar o título da página quando sair da página do projeto
   document.title = 'AIDev';

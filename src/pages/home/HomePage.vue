@@ -1,8 +1,8 @@
 <template>
   <div class="h-full">
-    <ProjectsComponent/>
+    <MenuComponent/>
   </div>
 </template>
 <script setup>
-import ProjectsComponent from "@/pages/home/ProjectsComponent.vue";
+import MenuComponent from "@/pages/home/MenuComponent.vue";
 </script>
