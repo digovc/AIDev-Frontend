@@ -1,11 +1,6 @@
 <template>
-  <div class="h-full flex">
-    <div class="h-full">
-      <MenuComponent/>
-    </div>
-    <div class="grow">
-      <RouterView/>
-    </div>
+  <div class="h-full">
+    <MenuComponent/>
   </div>
 </template>
 <script setup>
