@@ -46,7 +46,8 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue';
+import { reactive, ref, onMounted } from 'vue';
+import { settingsApi } from '@/api/settings.api';
 
 const loading = ref(false);
 
@@ -68,9 +69,9 @@ const settings = reactive({
 const saveSettings = async () => {
   try {
     loading.value = true;
-    // Implementar lógica de salvamento das configurações
-    console.log('Salvando configurações:', settings);
-    // TODO: Adicionar chamada de API para salvar configurações
+    const response = await settingsApi.saveSettings(settings);
+    console.log('Configurações salvas com sucesso:', response.data);
+    alert('Configurações salvas com sucesso!');
   } catch (error) {
     console.error('Erro ao salvar configurações:', error);
     alert('Não foi possível salvar as configurações. Tente novamente.');
@@ -87,4 +88,16 @@ const resetSettings = () => {
   settings.deepseek.enabled = false;
   settings.deepseek.apiKey = '';
 };
+
+onMounted(async () => {
+  try {
+    const response = await settingsApi.getSettings();
+    if (response.data) {
+      Object.assign(settings, response.data);
+    }
+  } catch (error) {
+    console.error('Erro ao carregar configurações:', error);
+    alert('Não foi possível carregar as configurações.');
+  }
+});
 </script>
