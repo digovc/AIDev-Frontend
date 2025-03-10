@@ -46,7 +46,7 @@
 </template>
 
 <script setup>
-import { reactive, ref, onMounted } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import { settingsApi } from '@/api/settings.api';
 
 const loading = ref(false);

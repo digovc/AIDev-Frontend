@@ -37,17 +37,17 @@
       </div>
 
       <div class="flex justify-end space-x-3">
-        <button type="button" @click="goBack" class="btn btn-secondary">
-          Cancelar
+        <button type="button" @click="saveAndRunTask" class="btn btn-success" :disabled="loading">
+          {{ loading ? 'Processando...' : 'Executar' }}
+        </button>
+        <button type="submit" class="btn btn-primary" :disabled="loading">
+          {{ loading ? 'Salvando...' : 'Salvar' }}
         </button>
         <button v-if="isEditing" type="button" @click="duplicateTask" class="btn btn-secondary" :disabled="loading">
           Duplicar
         </button>
-        <button type="button" @click="saveAndRunTask" class="btn btn-success" :disabled="loading">
-          {{ loading ? 'Processando...' : 'Salvar e Executar' }}
-        </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
-          {{ loading ? 'Salvando...' : 'Salvar' }}
+        <button type="button" @click="goBack" class="btn btn-secondary">
+          Cancelar
         </button>
       </div>
     </form>
