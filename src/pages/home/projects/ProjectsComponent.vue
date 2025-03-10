@@ -8,10 +8,10 @@
     </div>
     <div class="mb-4">
       <div class="relative">
-        <input 
-          type="text" 
-          v-model="searchQuery" 
-          placeholder="Pesquisar por nome, descrição ou caminho..." 
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Pesquisar por nome, descrição ou caminho..."
           class="w-full px-4 py-2 pl-10 rounded-lg border border-gray-600 bg-gray-800 text-white focus:outline-none focus:border-blue-500"
         />
         <div class="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400">
@@ -33,7 +33,7 @@
 
 <script setup>
 import { onMounted, ref, computed } from 'vue';
-import { projectsApi } from '@/api/projects.api';
+import { projectsApi } from '@/api/projects.api.js';
 import ProjectComponent from './ProjectComponent.vue';
 import ProjectFormComponent from '@/components/ProjectFormComponent.vue';
 
@@ -53,8 +53,8 @@ const fetchProjects = async () => {
 const filteredProjects = computed(() => {
   if (!searchQuery.value) return projects.value;
   const query = searchQuery.value.toLowerCase();
-  return projects.value.filter(project => 
-    project.name.toLowerCase().includes(query) || 
+  return projects.value.filter(project =>
+    project.name.toLowerCase().includes(query) ||
     (project.path && project.path.toLowerCase().includes(query)) ||
     (project.description && project.description.toLowerCase().includes(query))
   );

@@ -1,4 +1,4 @@
-import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
+import { createRouter, createWebHashHistory } from 'vue-router'
 
 const router = createRouter({
   history: createWebHashHistory(import.meta.env.BASE_URL),
@@ -12,6 +12,13 @@ const router = createRouter({
       path: '/home',
       name: 'home',
       component: () => import('./pages/home/HomePage.vue'),
+      children: [
+        {
+          path: '',
+          name: 'projects',
+          component: () => import('./pages/home/projects/ProjectsComponent.vue'),
+        }
+      ]
     },
     {
       path: '/projects/:id',
