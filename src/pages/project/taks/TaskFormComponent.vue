@@ -39,9 +39,9 @@
 
       <div class="mb-4">
         <label for="assistant" class="form-label">Assistente</label>
-        <select id="assistant" v-model="task.assistant" class="form-input">
+        <select id="assistant" v-model="task.assistantId" class="form-input">
           <option :value="null">Selecione um assistente</option>
-          <option v-for="assistant in assistants" :key="assistant.id" :value="assistant">
+          <option v-for="assistant in assistants" :key="assistant.id" :value="assistant.id">
             {{ assistant.name }}
           </option>
         </select>
@@ -213,7 +213,8 @@ const duplicateTask = async () => {
       description: task.description,
       status: 'backlog', // Define status como backlog para a nova tarefa
       references: [...task.references], // Copia as referências
-      projectId: props.project.id
+      projectId: props.project.id,
+      assistantId: task.assistantId
     };
 
     // Criar nova tarefa
