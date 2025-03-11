@@ -50,13 +50,13 @@ const sendMessage = async (text) => {
   const now = new Date();
 
   const userMessage = {
-    id: now.getTime(),
+    id: `${ now.getTime() }`,
     conversationId: selectedConversation.value.id,
     sender: 'user',
     timestamp: now.toISOString(),
     blocks: [
       {
-        id: now.getTime() + 1,
+        id: `${ now.getTime() + 1 }`,
         type: 'text',
         content: text
       }
