@@ -73,8 +73,8 @@
         </div>
       </div>
     </form>
+    <ReferencesDialog ref="referencesDialog" :project="project" :task-references="task.references" @update:references="updateReferences"/>
   </div>
-  <ReferencesDialog ref="referencesDialog" :project="project" :task-references="task.references" @update:references="updateReferences"/>
 </template>
 
 <script setup>
@@ -101,6 +101,8 @@ const loading = ref(false);
 const isEditing = ref(false);
 const referencesDialog = ref(null);
 const titleInput = ref(null);
+const assistants = ref([]);
+const conversationTitle = ref(null);
 
 const task = reactive({
   id: null,
@@ -111,7 +113,10 @@ const task = reactive({
   assistantId: null
 });
 
-const assistants = ref([]);
+const hasConversation = computed(() => {
+  console.log('hasConversation', task.conversationId);
+  return task.conversationId !== null && task.conversationId !== undefined;
+});
 
 const goBack = () => {
   router.push(`/projects/${ props.project.id }`);
@@ -204,6 +209,7 @@ const loadTask = async () => {
     }
 
     task.references = task.references || [];
+    task.conversationId = taskData.conversationId;
 
     await loadConversationTitle();
 
@@ -215,12 +221,6 @@ const loadTask = async () => {
     loading.value = false;
   }
 };
-
-const conversationTitle = ref(null);
-
-const hasConversation = computed(() => {
-  return task.conversationId !== null && task.conversationId !== undefined;
-});
 
 const loadConversationTitle = async () => {
   if (task.conversationId) {
@@ -252,7 +252,6 @@ const duplicateTask = async () => {
 
     // Navegar para a página de edição da nova tarefa
     await router.push(`/projects/${ props.project.id }/tasks/${ result.data.id }`);
-
   } catch (error) {
     console.error('Erro ao duplicar tarefa:', error);
     alert('Ocorreu um erro ao duplicar a tarefa. Por favor, tente novamente.');
@@ -274,14 +273,11 @@ const removeReference = (index) => {
 };
 
 // Observar mudanças na rota para recarregar a tarefa quando o parâmetro taskId mudar
-watch(
-    () => route.params.taskId,
-    async (newTaskId) => {
-      if (newTaskId) {
-        await loadTask();
-      }
-    }
-);
+watch(() => route.params.taskId, async (newTaskId) => {
+  if (newTaskId) {
+    await loadTask();
+  }
+});
 
 const loadAssistants = async () => {
   try {

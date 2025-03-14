@@ -117,7 +117,7 @@ const handleProjectUpdated = (updatedProject) => {
   }
 };
 
-async function loadProject() {
+const loadProject = async () => {
   if (!route.params.id) {
     return;
   }
@@ -138,7 +138,7 @@ async function loadProject() {
   } finally {
     loading.value = false;
   }
-}
+};
 
 const conversationCreated = (conversation) => {
   if (project.value && conversation.projectId === project.value.id) {
