@@ -10,7 +10,7 @@
     <form @submit.prevent="saveTask" class="flex flex-col grow space-y-2">
       <div class="mb-4">
         <label for="title" class="form-label">Título</label>
-        <input type="text" id="title" v-model="task.title" class="form-input" required autofocus/>
+        <input type="text" id="title" v-model="task.title" class="form-input" required ref="titleInput"/>
       </div>
 
       <div class="mb-4">
@@ -100,6 +100,7 @@ const route = useRoute();
 const loading = ref(false);
 const isEditing = ref(false);
 const referencesDialog = ref(null);
+const titleInput = ref(null);
 
 const task = reactive({
   id: null,
@@ -303,5 +304,6 @@ const loadAssistants = async () => {
 onMounted(async () => {
   await loadTask();
   await loadAssistants();
+  await titleInput.value.focus();
 });
 </script>
