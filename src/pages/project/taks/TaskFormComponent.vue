@@ -1,13 +1,13 @@
 <template>
-  <div class="bg-gray-900 rounded-lg shadow-md p-4 flex flex-col h-full">
-    <div class="flex justify-between items-center mb-4">
+  <div class="bg-gray-900 rounded-lg shadow-md p-4 flex flex-col h-full space-y-2">
+    <div class="flex justify-between items-center">
       <h2 class="text-xl font-bold">{{ isEditing ? `Editar Tarefa (${ task.id })` : 'Nova Tarefa' }}</h2>
       <button @click="goBack" class="text-gray-400 hover:text-gray-200">
         <FontAwesomeIcon :icon="faTimes" class="text-2xl"/>
       </button>
     </div>
 
-    <form @submit.prevent="saveTask" class="h-full flex flex-col">
+    <form @submit.prevent="saveTask" class="flex flex-col grow space-y-2">
       <div class="mb-4">
         <label for="title" class="form-label">Título</label>
         <input type="text" id="title" v-model="task.title" class="form-input" required autofocus/>
@@ -19,10 +19,10 @@
       </div>
 
       <!-- Adicione esta nova seção para listar as referências -->
-      <div class="mb-4 grow">
-        <div class="flex justify-between items-center mb-2">
+      <div class="grow flex flex-col">
+        <div class="flex justify-between items-center">
           <label class="form-label">Referências</label>
-          <button type="button" @click="openReferencesDialog" class="btn btn-secondary btn-sm">
+          <button type="button" @click="openReferencesDialog" class="btn btn-secondary mt-1 mr-1">
             <FontAwesomeIcon :icon="faPlus" class="mr-2"/>
             Adicionar Referência
           </button>
@@ -32,12 +32,12 @@
           Nenhuma referência adicionada
         </div>
 
-        <div v-else class="space-y-2 max-h-54 overflow-y-auto pt-3">
+        <div v-else class="space-y-2 pt-3 grow h-1 overflow-y-auto">
           <ReferenceComponent v-for="(ref, index) in task.references" :key="index" :reference="ref" @remove="removeReference(index)"/>
         </div>
       </div>
 
-      <div class="mb-4">
+      <div>
         <label for="assistant" class="form-label">Assistente</label>
         <select id="assistant" v-model="task.assistantId" class="form-input">
           <option :value="null">Selecione um assistente</option>
