@@ -10,7 +10,7 @@
 
     <div v-else class="flex h-full">
       <!-- Coluna da esquerda (tarefas) -->
-      <div class="space-y-4 flex flex-col" :style="{ width: `${leftWidth}%` }">
+      <div class="space-y-2 flex flex-col" :style="{ width: `${leftWidth}%` }">
         <!-- Componente de informações do projeto -->
         <ProjectInfoComponent :project="project" @project-updated="handleProjectUpdated"/>
         <div class="relative grow overflow-y-auto">

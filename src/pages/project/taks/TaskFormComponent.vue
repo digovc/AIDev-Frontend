@@ -1,5 +1,5 @@
 <template>
-  <div class="bg-gray-900 rounded-lg shadow-md p-4 flex flex-col">
+  <div class="bg-gray-900 rounded-lg shadow-md p-4 flex flex-col h-full">
     <div class="flex justify-between items-center mb-4">
       <h2 class="text-xl font-bold">{{ isEditing ? `Editar Tarefa (${ task.id })` : 'Nova Tarefa' }}</h2>
       <button @click="goBack" class="text-gray-400 hover:text-gray-200">
@@ -7,7 +7,7 @@
       </button>
     </div>
 
-    <form @submit.prevent="saveTask">
+    <form @submit.prevent="saveTask" class="h-full flex flex-col">
       <div class="mb-4">
         <label for="title" class="form-label">Título</label>
         <input type="text" id="title" v-model="task.title" class="form-input" required autofocus/>
@@ -19,7 +19,7 @@
       </div>
 
       <!-- Adicione esta nova seção para listar as referências -->
-      <div class="mb-4">
+      <div class="mb-4 grow">
         <div class="flex justify-between items-center mb-2">
           <label class="form-label">Referências</label>
           <button type="button" @click="openReferencesDialog" class="btn btn-secondary btn-sm">
@@ -32,7 +32,7 @@
           Nenhuma referência adicionada
         </div>
 
-        <div v-else class="space-y-2 max-h-60 overflow-y-auto pt-3">
+        <div v-else class="space-y-2 max-h-54 overflow-y-auto pt-3">
           <ReferenceComponent v-for="(ref, index) in task.references" :key="index" :reference="ref" @remove="removeReference(index)"/>
         </div>
       </div>
