@@ -32,7 +32,7 @@
           Nenhuma referência adicionada
         </div>
 
-        <div v-else class="space-y-2 max-h-60 overflow-y-auto pt-3 pr-3">
+        <div v-else class="space-y-2 max-h-60 overflow-y-auto pt-3">
           <ReferenceComponent v-for="(ref, index) in task.references" :key="index" :reference="ref" @remove="removeReference(index)"/>
         </div>
       </div>
