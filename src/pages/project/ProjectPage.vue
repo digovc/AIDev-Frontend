@@ -48,6 +48,7 @@ const chatComponent = ref(null);
 // Estado para controlar o redimensionamento
 const leftWidth = ref(66); // Padrão: 66% para a esquerda (aprox. 2/3)
 const isResizing = ref(false);
+const containerRef = ref(null);
 
 // Carregar a proporção salva do localStorage ou usar o valor padrão
 const loadSavedLayout = () => {
@@ -73,6 +74,8 @@ const saveLayout = () => {
 // Lidar com o início do redimensionamento
 const startResize = (e) => {
   isResizing.value = true;
+  // Armazenar a referência ao container
+  containerRef.value = e.target.closest('.flex.h-full');
   document.addEventListener('mousemove', onResize);
   document.addEventListener('mouseup', stopResize);
   // Evitar seleção de texto durante o redimensionamento
@@ -81,10 +84,9 @@ const startResize = (e) => {
 
 // Calcular a nova largura durante o redimensionamento
 const onResize = (e) => {
-  if (!isResizing.value) return;
+  if (!isResizing.value || !containerRef.value) return;
 
-  const container = e.currentTarget.parentElement;
-  const containerRect = container.getBoundingClientRect();
+  const containerRect = containerRef.value.getBoundingClientRect();
   const newWidth = ((e.clientX - containerRect.left) / containerRect.width) * 100;
 
   // Limitar a largura entre 30% e 80%
