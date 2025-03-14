@@ -47,22 +47,30 @@
         </select>
       </div>
 
-      <div class="flex justify-end space-x-3">
-        <button type="button" @click="saveAndRunTask" class="btn btn-primary" :disabled="loading">
-          <FontAwesomeIcon :icon="faPlay" class="mr-2"/>
-          {{ loading ? 'Processando...' : 'Executar' }}
-        </button>
-        <button type="submit" class="btn btn-primary" :disabled="loading">
-          <FontAwesomeIcon :icon="faSave" class="mr-2"/>
-          {{ loading ? 'Salvando...' : 'Salvar' }}
-        </button>
-        <button v-if="isEditing" type="button" @click="duplicateTask" class="btn btn-secondary" :disabled="loading">
-          <FontAwesomeIcon :icon="faCopy" class="mr-2"/>
-          Duplicar
-        </button>
-        <button type="button" @click="goBack" class="btn btn-secondary">
-          Cancelar
-        </button>
+      <div class="flex justify-between items-center space-x-3">
+        <div class="flex items-center">
+          <div v-if="hasConversation" class="flex items-center text-sm text-gray-400 mr-4">
+            <FontAwesomeIcon :icon="faComments" class="mr-2"/>
+            <span>{{ conversationTitle || 'Conversa vinculada' }}</span>
+          </div>
+        </div>
+        <div class="flex justify-end space-x-3">
+          <button type="button" @click="saveAndRunTask" class="btn btn-primary" :disabled="loading">
+            <FontAwesomeIcon :icon="faPlay" class="mr-2"/>
+            {{ loading ? 'Processando...' : 'Executar' }}
+          </button>
+          <button type="submit" class="btn btn-primary" :disabled="loading">
+            <FontAwesomeIcon :icon="faSave" class="mr-2"/>
+            {{ loading ? 'Salvando...' : 'Salvar' }}
+          </button>
+          <button v-if="isEditing" type="button" @click="duplicateTask" class="btn btn-secondary" :disabled="loading">
+            <FontAwesomeIcon :icon="faCopy" class="mr-2"/>
+            Duplicar
+          </button>
+          <button type="button" @click="goBack" class="btn btn-secondary">
+            Cancelar
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -70,14 +78,15 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { tasksApi } from '@/api/tasks.api.js';
 import ReferencesDialog from '@/pages/project/taks/ReferencesDialog.vue';
 import ReferenceComponent from '@/components/ReferenceComponent.vue';
 import { assistantsApi } from '@/api/assistants.api.js';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faCopy, faPlay, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faComments, faCopy, faPlay, faPlus, faSave, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { conversationsApi } from '@/api/conversations.api.js';
 
 const props = defineProps({
   project: {
@@ -188,18 +197,38 @@ const loadTask = async () => {
     loading.value = true;
     const response = await tasksApi.getTaskById(taskId);
     const taskData = response.data;
-    task.id = taskData.id;
-    task.title = taskData.title;
-    task.description = taskData.description;
-    task.status = taskData.status;
-    task.references = taskData.references || [];
-    task.assistantId = taskData.assistantId;
+
+    for (const key in taskData) {
+      task[key] = taskData[key];
+    }
+
+    task.references = task.references || [];
+
+    await loadConversationTitle();
+
   } catch (error) {
     console.error('Erro ao carregar tarefa:', error);
     alert('Não foi possível carregar os dados da tarefa.');
     await router.push(`/projects/${ props.project.id }`);
   } finally {
     loading.value = false;
+  }
+};
+
+const conversationTitle = ref(null);
+
+const hasConversation = computed(() => {
+  return task.conversationId !== null && task.conversationId !== undefined;
+});
+
+const loadConversationTitle = async () => {
+  if (task.conversationId) {
+    try {
+      const response = await conversationsApi.getById(task.conversationId);
+      conversationTitle.value = response.data.title;
+    } catch (error) {
+      console.error('Erro ao carregar título da conversa:', error);
+    }
   }
 };
 
